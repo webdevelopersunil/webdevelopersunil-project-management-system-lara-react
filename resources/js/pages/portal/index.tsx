@@ -31,7 +31,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Search, Plus, MoreVertical, Edit, Trash2, Eye, Filter } from 'lucide-react';
 
-interface PageProps {
+interface PortalProps {
   portals: Portal[];
   total: number;
   filters: {
@@ -63,7 +63,7 @@ interface Portal {
     document_count: number;
 }
 
-export default function Dashboard({ portals = [], total = 0, filters = { search: '', status: '' } }: DashboardProps) {
+export default function Dashboard({ portals = [], total = 0, filters = { search: '', status: '' } }: PortalProps) {
     // Status badge color mapping
     const statusColors = {
         active: 'bg-green-100 text-green-800 border-green-200',
