@@ -1,28 +1,69 @@
-/.phpunit.cache
-/bootstrap/ssr
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/resources/js/actions
-/resources/js/routes
-/resources/js/wayfinder
-/storage/*.key
-/storage/pail
-/vendor
-.DS_Store
+# ===============================
+# Dependencies
+# ===============================
+/node_modules/
+/vendor/
+
+# ===============================
+# Build artifacts (Vite / Inertia)
+# ===============================
+/public/build/
+/public/hot/
+
+# ===============================
+# Environment files
+# ===============================
 .env
-.env.backup
-.env.production
-.phpactor.json
+.env.*
+!.env.example
+
+# ===============================
+# Storage (runtime / cache / logs)
+# ===============================
+/storage/*
+!/storage/app/
+!/storage/app/public/
+!/storage/framework/
+!/storage/framework/.gitignore
+!/storage/logs/
+!/storage/logs/.gitignore
+
+# ===============================
+# Laravel runtime caches
+# ===============================
+/bootstrap/cache/*.php
 .phpunit.result.cache
+/.phpunit.cache/
+
+# ===============================
+# SSR (if enabled)
+# ===============================
+/bootstrap/ssr/
+
+# ===============================
+# IDE / OS junk
+# ===============================
+.DS_Store
+.idea/
+.vscode/
+.fleet/
+.zed/
+
+# ===============================
+# Logs
+# ===============================
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ===============================
+# Homestead / Sail
+# ===============================
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
-/auth.json
-/.fleet
-/.idea
-/.nova
-/.vscode
-/.zed
+
+# ===============================
+# Misc
+# ===============================
+auth.json
+.phpactor.json
