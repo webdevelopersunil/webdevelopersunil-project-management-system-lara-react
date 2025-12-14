@@ -55,16 +55,53 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface Portal {
-    id: number;
-    name: string;
-    description: string;
-    status: 'active' | 'inactive' | 'pending';
-    created_at: string;
-    updated_at: string;
-    user_count: number;
-    document_count: number;
+
+export interface Portal {
+
+  id: number;
+  name: string;
+  description: string | null;
+  owner_id: number | null;
+
+  url: string;
+  domain: string | null;
+
+  active: boolean;
+
+  ip_address: string | null;
+
+  status: 'completed' | 'pending' | 'in-progress';
+
+  server_backup: boolean;
+  db_backup: boolean;
+  migrate_to_new_server: boolean;
+
+  vm_name: string | null;
+
+  framework: string | null;
+  framework_version: number | null;
+
+  database: string | null;
+  database_version: number | null;
+
+  is_public: boolean;
+
+  machine_type:
+    | 'Windows'
+    | 'RHEL'
+    | 'Ubuntu'
+    | 'CentOS'
+    | 'Other'
+    | 'Not-Defined';
+
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
+
+  user_count: number;
+document_count: number;
 }
+
 
 interface PaginationLink {
     url: string | null;
@@ -72,7 +109,7 @@ interface PaginationLink {
     active: boolean;
 }
 
-interface DashboardProps {
+interface PortalProps {
     portals: Portal[];
     total: number;
     current_page: number;
@@ -87,20 +124,11 @@ interface DashboardProps {
     links: PaginationLink[];
 }
 
-export default function Dashboard({ 
-    portals, 
-    total, 
-    current_page, 
-    last_page, 
-    per_page, 
-    from, 
-    to, 
-    filters,
-    links 
-}: DashboardProps) {
-    const { url } = usePage();
-    const [search, setSearch] = useState(filters.search || '');
-    const [status, setStatus] = useState(filters.status || '');
+export default function PortalPage({ portals, total, current_page, last_page, per_page, from, to, filters, links  }: PortalProps) {
+
+    const { url }               = usePage();
+    const [search, setSearch]   = useState(filters.search || '');
+    const [status, setStatus]   = useState(filters.status || '');
     const [debouncedSearch, setDebouncedSearch] = useState(search);
     
     // Status badge color mapping
@@ -198,7 +226,7 @@ export default function Dashboard({
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -233,7 +261,7 @@ export default function Dashboard({
                             </div>
                         </CardContent>
                     </Card>
-                </div>
+                </div> */}
 
                 {/* Search and Filters */}
                 <Card className="mb-6">
@@ -259,13 +287,7 @@ export default function Dashboard({
                                     <option value="inactive">Inactive</option>
                                     <option value="pending">Pending</option>
                                 </select>
-                                <Button 
-                                    variant="outline" 
-                                    onClick={() => {
-                                        setSearch('');
-                                        setStatus('');
-                                    }}
-                                >
+                                <Button variant="outline" onClick={() => { setSearch(''); setStatus(''); }} >
                                     Clear Filters
                                 </Button>
                             </div>
@@ -304,7 +326,7 @@ export default function Dashboard({
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>ID</TableHead>
+                                    <TableHead>Index</TableHead>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Description</TableHead>
                                     <TableHead>Status</TableHead>
@@ -316,13 +338,16 @@ export default function Dashboard({
                             </TableHeader>
                             <TableBody>
                                 {portals.length > 0 ? (
-                                    portals.map((portal) => (
+                                    portals.map((portal, index) => (
                                         <TableRow key={portal.id}>
                                             <TableCell className="font-medium">
-                                                #{portal.id}
+                                                {index+1}
                                             </TableCell>
                                             <TableCell>
                                                 <div className="font-medium">{portal.name}</div>
+                                                <p className="text-sm text-muted-foreground mt-1">
+                                                    {portal.url}
+                                                </p>
                                             </TableCell>
                                             <TableCell className="max-w-xs truncate">
                                                 {portal.description}
@@ -395,12 +420,6 @@ export default function Dashboard({
                                                     <p className="text-muted-foreground mt-1">
                                                         Get started by creating your first portal.
                                                     </p>
-                                                    <Link href="/portals/create">
-                                                        <Button className="mt-4 gap-2">
-                                                            <Plus className="h-4 w-4" />
-                                                            Create Portal
-                                                        </Button>
-                                                    </Link>
                                                 </div>
                                             </div>
                                         </TableCell>

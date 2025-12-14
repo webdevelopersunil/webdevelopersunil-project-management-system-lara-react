@@ -9,18 +9,39 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Portal extends Model
 {
-    use HasFactory, HasUuids, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'portals';
 
     protected $fillable = [
-        'owner_id',
-        'title',
+        'name',
         'description',
+        'owner_id',
+        'url',
+        'domain',
+        'active',
+        'ip_address',
+        'status',
+        'server_backup',
+        'db_backup',
+        'migrate_to_new_server',
+        'vm_name',
+        'framework',
+        'framework_version',
+        'database',
+        'database_version',
         'is_public',
+        'machine_type',
     ];
 
     protected $casts = [
+        'active' => 'boolean',
+        'server_backup' => 'boolean',
+        'db_backup' => 'boolean',
+        'migrate_to_new_server' => 'boolean',
+        'framework_version' => 'double',
+        'database_version' => 'double',
+
         'is_public' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

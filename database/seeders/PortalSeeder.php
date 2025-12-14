@@ -12,6 +12,7 @@ class PortalSeeder extends Seeder
      */
     public function run(): void
     {
-        Portal::factory(100)->create();
+        
+        Portal::factory()->count(25)->create();
     }
 }

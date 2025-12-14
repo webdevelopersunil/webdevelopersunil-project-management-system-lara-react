@@ -18,7 +18,7 @@ class PortalController extends Controller
         // Apply search filter
         if ($request->has('search') && !empty($request->search)) {
             $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
+                $q->where('name', 'like', '%' . $request->search . '%')
                 ->orWhere('description', 'like', '%' . $request->search . '%');
             });
         }
@@ -50,7 +50,7 @@ class PortalController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('portal/create');
     }
 
     /**

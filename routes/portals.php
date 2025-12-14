@@ -9,4 +9,6 @@ Route::middleware('auth')->group(function () {
     
     Route::get('portals', [PortalController::class, 'index'])->name('portal.index');
 
+    Route::get('portals/create', [PortalController::class, 'create'])->name('portal.create');
+
 });
