@@ -12,9 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('portals', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->uuid('id')->primary();
+
+            $table->foreignId('owner_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->text('title');
+            $table->text('description')->nullable();
+            $table->boolean('is_public')->default(false);
+            $table->timestampsTz();
+            $table->softDeletesTz();
         });
+
     }
 
     /**

@@ -13,8 +13,14 @@ class PortalController extends Controller
      */
     public function index(Request $request)
     {
+        $portals = Portal::where('owner_id', $request->user()->id)->get();
+        $total = 100;
         
-        return Inertia::render('portal/index');
+        return Inertia::render('portal/index', [
+            'portals'   => $portals,
+            'total'     => $total,
+            'filters'   => $request->only(['search', 'status']), // Pass current filters back to the view
+        ]);
     }
 
     /**
