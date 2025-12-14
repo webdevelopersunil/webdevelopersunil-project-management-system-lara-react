@@ -13,13 +13,35 @@ class PortalController extends Controller
      */
     public function index(Request $request)
     {
-        $portals = Portal::where('owner_id', $request->user()->id)->get();
-        $total = 100;
+        $query = Portal::where('owner_id', $request->user()->id);
+        
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+        
+        // Apply status filter
+        if ($request->has('status') && !empty($request->status) && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+        
+        // Get paginated results
+        $perPage = $request->get('per_page', 15);
+        $portals = $query->latest()->paginate($perPage)->withQueryString();
         
         return Inertia::render('portal/index', [
-            'portals'   => $portals,
-            'total'     => $total,
-            'filters'   => $request->only(['search', 'status']), // Pass current filters back to the view
+            'portals' => $portals->items(),
+            'total' => $portals->total(),
+            'current_page' => $portals->currentPage(),
+            'last_page' => $portals->lastPage(),
+            'per_page' => $portals->perPage(),
+            'from' => $portals->firstItem(),
+            'to' => $portals->lastItem(),
+            'filters' => $request->only(['search', 'status']),
+            'links' => $portals->linkCollection()->toArray(),
         ]);
     }
 

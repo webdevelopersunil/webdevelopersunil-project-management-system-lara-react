@@ -31,4 +31,18 @@ class Portal extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+    
+    /**
+     * Get the documents for the portal
+     */
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
+    
 }

@@ -2,7 +2,7 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import {
     Table,
     TableBody,
@@ -29,17 +29,20 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search, Plus, MoreVertical, Edit, Trash2, Eye, Filter } from 'lucide-react';
-
-interface PortalProps {
-  portals: Portal[];
-  total: number;
-  filters: {
-    search?: string;
-    status?: string;
-  };
-}
-
+import { 
+    Search, 
+    Plus, 
+    MoreVertical, 
+    Edit, 
+    Trash2, 
+    Eye, 
+    Filter,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -63,7 +66,43 @@ interface Portal {
     document_count: number;
 }
 
-export default function Dashboard({ portals = [], total = 0, filters = { search: '', status: '' } }: PortalProps) {
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface DashboardProps {
+    portals: Portal[];
+    total: number;
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    from: number;
+    to: number;
+    filters: {
+        search: string;
+        status: string;
+    };
+    links: PaginationLink[];
+}
+
+export default function Dashboard({ 
+    portals, 
+    total, 
+    current_page, 
+    last_page, 
+    per_page, 
+    from, 
+    to, 
+    filters,
+    links 
+}: DashboardProps) {
+    const { url } = usePage();
+    const [search, setSearch] = useState(filters.search || '');
+    const [status, setStatus] = useState(filters.status || '');
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
+    
     // Status badge color mapping
     const statusColors = {
         active: 'bg-green-100 text-green-800 border-green-200',
@@ -71,11 +110,68 @@ export default function Dashboard({ portals = [], total = 0, filters = { search:
         pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     };
 
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // Apply filters when they change
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        
+        if (debouncedSearch) {
+            params.set('search', debouncedSearch);
+        } else {
+            params.delete('search');
+        }
+        
+        if (status && status !== 'all') {
+            params.set('status', status);
+        } else {
+            params.delete('status');
+        }
+        
+        // Reset to first page when filters change
+        params.delete('page');
+        
+        router.get(`${url.split('?')[0]}?${params.toString()}`, {}, {
+            preserveState: true,
+            replace: true,
+        });
+    }, [debouncedSearch, status]);
+
     const handleDelete = (id: number) => {
         if (confirm('Are you sure you want to delete this portal?')) {
             // Delete logic here
             console.log('Deleting portal:', id);
         }
+    };
+
+    const handlePageChange = (page: number) => {
+        if (page < 1 || page > last_page) return;
+        
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', page.toString());
+        
+        router.get(`${url.split('?')[0]}?${params.toString()}`, {}, {
+            preserveState: true,
+            replace: true,
+        });
+    };
+
+    const handlePerPageChange = (value: string) => {
+        const params = new URLSearchParams(window.location.search);
+        params.set('per_page', value);
+        params.delete('page'); // Reset to first page
+        
+        router.get(`${url.split('?')[0]}?${params.toString()}`, {}, {
+            preserveState: true,
+            replace: true,
+        });
     };
 
     return (
@@ -148,25 +244,30 @@ export default function Dashboard({ portals = [], total = 0, filters = { search:
                                 <Input
                                     placeholder="Search portals by name or description..."
                                     className="pl-10"
-                                    defaultValue={filters.search}
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
                                 />
                             </div>
                             <div className="flex gap-2">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" className="gap-2">
-                                            <Filter className="h-4 w-4" />
-                                            Status
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem>All</DropdownMenuItem>
-                                        <DropdownMenuItem>Active</DropdownMenuItem>
-                                        <DropdownMenuItem>Inactive</DropdownMenuItem>
-                                        <DropdownMenuItem>Pending</DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                                <Button variant="outline">Clear Filters</Button>
+                                <select
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)}
+                                >
+                                    <option value="">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                                <Button 
+                                    variant="outline" 
+                                    onClick={() => {
+                                        setSearch('');
+                                        setStatus('');
+                                    }}
+                                >
+                                    Clear Filters
+                                </Button>
                             </div>
                         </div>
                     </CardContent>
@@ -175,10 +276,29 @@ export default function Dashboard({ portals = [], total = 0, filters = { search:
                 {/* Portals Table */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Portal List</CardTitle>
-                        <CardDescription>
-                            All portals with their details and actions
-                        </CardDescription>
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <CardTitle>Portal List</CardTitle>
+                                <CardDescription>
+                                    All portals with their details and actions
+                                </CardDescription>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-muted-foreground">Show:</span>
+                                <select
+                                    className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                    value={per_page}
+                                    onChange={(e) => handlePerPageChange(e.target.value)}
+                                >
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                                <span className="text-sm text-muted-foreground">per page</span>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -275,6 +395,12 @@ export default function Dashboard({ portals = [], total = 0, filters = { search:
                                                     <p className="text-muted-foreground mt-1">
                                                         Get started by creating your first portal.
                                                     </p>
+                                                    <Link href="/portals/create">
+                                                        <Button className="mt-4 gap-2">
+                                                            <Plus className="h-4 w-4" />
+                                                            Create Portal
+                                                        </Button>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </TableCell>
@@ -285,25 +411,68 @@ export default function Dashboard({ portals = [], total = 0, filters = { search:
                     </CardContent>
                 </Card>
 
-                {/* Pagination (if needed) */}
+                {/* Pagination */}
                 {portals.length > 0 && (
-                    <div className="flex items-center justify-between mt-6">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
                         <div className="text-sm text-muted-foreground">
-                            Showing {portals.length} of {total} portals
+                            Showing <span className="font-medium">{from}</span> to{' '}
+                            <span className="font-medium">{to}</span> of{' '}
+                            <span className="font-medium">{total}</span> results
                         </div>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" disabled>
-                                Previous
+                        
+                        <div className="flex items-center gap-1">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handlePageChange(1)}
+                                disabled={current_page === 1}
+                            >
+                                <ChevronsLeft className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm">
-                                1
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handlePageChange(current_page - 1)}
+                                disabled={current_page === 1}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm">
-                                2
+                            
+                            <div className="flex items-center gap-1 mx-2">
+                                {links.slice(1, -1).map((link, index) => (
+                                    <Button
+                                        key={index}
+                                        variant={link.active ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => handlePageChange(parseInt(link.label))}
+                                        disabled={!link.url || link.active}
+                                    >
+                                        {link.label}
+                                    </Button>
+                                ))}
+                            </div>
+                            
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handlePageChange(current_page + 1)}
+                                disabled={current_page === last_page}
+                            >
+                                <ChevronRight className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm">
-                                Next
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handlePageChange(last_page)}
+                                disabled={current_page === last_page}
+                            >
+                                <ChevronsRight className="h-4 w-4" />
                             </Button>
+                        </div>
+                        
+                        <div className="text-sm text-muted-foreground">
+                            Page <span className="font-medium">{current_page}</span> of{' '}
+                            <span className="font-medium">{last_page}</span>
                         </div>
                     </div>
                 )}
