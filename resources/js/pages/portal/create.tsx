@@ -48,7 +48,7 @@ export default function PortalCreate() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post('/portals');
-    };
+    }; 
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -72,7 +72,7 @@ export default function PortalCreate() {
                         </CardDescription>
                     </CardHeader>
                     
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} method='post' >
                         <CardContent className="space-y-6">
                             {Object.keys(errors).length > 0 && (
                                 <Alert variant="destructive">

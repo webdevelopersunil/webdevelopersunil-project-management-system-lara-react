@@ -11,4 +11,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('portals/create', [PortalController::class, 'create'])->name('portal.create');
 
+    Route::post('portals/', [PortalController::class, 'store'])->name('portal.store');
+
 });

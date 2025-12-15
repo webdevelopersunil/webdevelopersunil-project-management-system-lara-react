@@ -161,9 +161,66 @@ createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 create.form = createForm
 
+/**
+* @see \App\Http\Controllers\PortalController::store
+* @see app/Http/Controllers/PortalController.php:59
+* @route '/portals'
+*/
+export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
+
+store.definition = {
+    methods: ["post"],
+    url: '/portals',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\PortalController::store
+* @see app/Http/Controllers/PortalController.php:59
+* @route '/portals'
+*/
+store.url = (options?: RouteQueryOptions) => {
+    return store.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PortalController::store
+* @see app/Http/Controllers/PortalController.php:59
+* @route '/portals'
+*/
+store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PortalController::store
+* @see app/Http/Controllers/PortalController.php:59
+* @route '/portals'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PortalController::store
+* @see app/Http/Controllers/PortalController.php:59
+* @route '/portals'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
+
 const portal = {
     index: Object.assign(index, index),
     create: Object.assign(create, create),
+    store: Object.assign(store, store),
 }
 
 export default portal
