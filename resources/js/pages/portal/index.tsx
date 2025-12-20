@@ -326,8 +326,8 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Index</TableHead>
-                                    <TableHead>Name</TableHead>
+                                    <TableHead>#</TableHead>
+                                    <TableHead>Portal Detail</TableHead>
                                     <TableHead>Description</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Users</TableHead>

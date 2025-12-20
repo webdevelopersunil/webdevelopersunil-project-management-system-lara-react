@@ -59,7 +59,23 @@ class PortalController extends Controller
     public function store(Request $request)
     {
         
-        dd($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:completed,pending,in-progress',
+            'url' => 'required|url|max:255',
+        ]);
+
+        $portal = new Portal();
+        $portal->name = $validated['name'];
+        $portal->description = $validated['description'] ?? null;
+        $portal->status = $validated['status'];
+        $portal->owner_id = $request->user()->id;
+        $portal->url = $validated['url'];
+        $portal->save();
+
+        return redirect()->route('portal.index')->with('success', 'Portal created successfully.');
+
     }
 
     /**
