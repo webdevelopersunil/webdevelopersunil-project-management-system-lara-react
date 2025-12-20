@@ -124,6 +124,15 @@ interface PortalProps {
     links: PaginationLink[];
 }
 
+const getDomain = (url:string) => {
+    try {
+        return new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+        return url;
+    }
+};
+
+
 export default function PortalPage({ portals, total, current_page, last_page, per_page, from, to, filters, links  }: PortalProps) {
 
     const { url }               = usePage();
@@ -328,14 +337,42 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                 <TableRow>
                                     <TableHead>#</TableHead>
                                     <TableHead>Portal Detail</TableHead>
-                                    <TableHead>Description</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Users</TableHead>
-                                    <TableHead>Documents</TableHead>
-                                    <TableHead>Created At</TableHead>
+                                    <TableHead>
+                                        <div className="flex items-center gap-2 text-xs font-semibold uppercase text-gray-700">
+                                            <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded">
+                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                <span>Portal Status</span>
+                                            </div>
+                                            <span className="text-gray-400">|</span>
+                                            <div className="flex items-center gap-1 px-2 py-1 bg-purple-50 rounded">
+                                                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                                <span>DB Backup</span>
+                                            </div>
+                                            <span className="text-gray-400">|</span>
+                                            <div className="flex items-center gap-1 px-2 py-1 bg-green-50 rounded">
+                                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                <span>Server Backup</span>
+                                            </div>
+                                            <span className="text-gray-400">|</span>
+                                            <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 rounded">
+                                                <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                                                <span>Migration</span>
+                                            </div>
+                                            <span className="text-gray-400">|</span>
+                                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-50 rounded">
+                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                <span>Public</span>
+                                            </div>
+                                        </div>
+                                    </TableHead>
+                                    <TableHead>Framework (Version)</TableHead>
+                                    <TableHead>Database (Version)</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
+
+
+
                             <TableBody>
                                 {portals.length > 0 ? (
                                     portals.map((portal, index) => (
@@ -346,35 +383,82 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                             <TableCell>
                                                 <div className="font-medium">{portal.name}</div>
                                                 <p className="text-sm text-muted-foreground mt-1">
-                                                    {portal.url}
+                                                    {getDomain(portal.url)}
                                                 </p>
                                             </TableCell>
-                                            <TableCell className="max-w-xs truncate">
-                                                {portal.description}
-                                            </TableCell>
+
                                             <TableCell>
-                                                <Badge 
-                                                    variant="outline" 
-                                                    className={`capitalize ${statusColors[portal.status]}`}
-                                                >
-                                                    {portal.status}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-1">
-                                                    <span className="font-medium">{portal.user_count}</span>
-                                                    <span className="text-muted-foreground">users</span>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {/* Status Badge */}
+                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold 
+                                                            ${
+                                                                portal.status === 'completed' 
+                                                                    ? 'bg-green-100 border-green-300 text-green-800' 
+                                                                    : portal.status === 'in-progress' 
+                                                                        ? 'bg-blue-100 border-blue-300 text-blue-800' 
+                                                                        : 'bg-yellow-100 border-yellow-300 text-yellow-800'
+                                                            }`}
+                                                    >
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${ portal.status === 'completed' ? 'bg-green-500' : portal.status === 'in-progress' ? 'bg-blue-500' : 'bg-yellow-500' }`} />
+                                                        Status : {portal.status === 'completed'  ? 'Completed'  : portal.status === 'in-progress'  ? 'In Progress'  : 'Pending'}
+                                                    </div>
+
+                                                    {/* Server Backup */}
+                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${
+                                                        portal.server_backup 
+                                                            ? 'bg-green-100 border-green-300 text-green-800' 
+                                                            : 'bg-red-100 border-red-300 text-red-800'
+                                                    }`}>
+                                                        {portal.server_backup ? '✓' : '✗'} Backup
+                                                    </div>
+
+                                                    {/* DB Backup */}
+                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${
+                                                        portal.server_backup 
+                                                            ? 'bg-green-100 border-green-300 text-green-800' 
+                                                            : 'bg-red-100 border-red-300 text-red-800'
+                                                    }`}>
+                                                        {portal.server_backup ? '✓' : '✗'} Server Backup
+                                                    </div>
+
+                                                    {/* Migration */}
+                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.migrate_to_new_server ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-gray-100 border-gray-300 text-gray-600'}`}>
+                                                        {portal.migrate_to_new_server ? '↗' : '—'} Migrated To New
+                                                    </div>
+
+                                                    {/* Exposed to Internet */}
+                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.is_public ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'}`}>
+                                                        {portal.is_public ? '✓' : '✗'} Exposed
+                                                    </div>
                                                 </div>
                                             </TableCell>
+
                                             <TableCell>
                                                 <div className="flex items-center gap-1">
-                                                    <span className="font-medium">{portal.document_count}</span>
-                                                    <span className="text-muted-foreground">docs</span>
+                                                    <span className="font-medium text-red-800">{portal.framework}</span>
+                                                    <span className={`text-xs px-1 py-0.5 rounded ${
+                                                        portal.framework_version 
+                                                            ? 'bg-gray-100 text-gray-700' 
+                                                            : 'bg-red-100 text-red-700 font-bold'
+                                                    }`}>
+                                                        ({portal.framework_version || '?'})
+                                                    </span>
                                                 </div>
                                             </TableCell>
+
                                             <TableCell>
-                                                {new Date(portal.created_at).toLocaleDateString()}
+                                                <div className="flex items-center gap-1">
+                                                    <span className="font-medium text-red-800">{portal.database}</span>
+                                                    <span className={`text-xs px-1 py-0.5 rounded ${
+                                                        portal.database_version 
+                                                            ? 'bg-gray-100 text-gray-700' 
+                                                            : 'bg-red-100 text-red-700 font-bold'
+                                                    }`}>
+                                                        ({portal.database_version || '?'})
+                                                    </span>
+                                                </div>
                                             </TableCell>
+                                            
                                             <TableCell className="text-right">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
@@ -408,6 +492,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
+                                            
                                         </TableRow>
                                     ))
                                 ) : (

@@ -64,6 +64,12 @@ class PortalController extends Controller
             'description' => 'nullable|string',
             'status' => 'required|in:completed,pending,in-progress',
             'url' => 'required|url|max:255',
+            'framework' => 'nullable|string|max:255',
+            'framework_version' => 'nullable',
+            'database' => 'nullable|string|max:255',
+            'database_version' => 'nullable',
+            'is_public' => 'boolean',
+            'machine_type' => 'nullable|in:Windows,RHEL,Ubuntu,CentOS,Other,Not-Defined',
         ]);
 
         $portal = new Portal();
@@ -72,6 +78,13 @@ class PortalController extends Controller
         $portal->status = $validated['status'];
         $portal->owner_id = $request->user()->id;
         $portal->url = $validated['url'];
+        $portal->domain = parse_url($validated['url'], PHP_URL_HOST);
+        $portal->framework = $validated['framework'] ?? null;
+        $portal->framework_version = $validated['framework_version'] ?? null;
+        $portal->database = $validated['database'] ?? null;
+        $portal->database_version = $validated['database_version'] ?? null;
+        $portal->is_public = $validated['is_public'] ?? false;
+        $portal->machine_type = $validated['machine_type'] ?? 'Not-Defined';
         $portal->save();
 
         return redirect()->route('portal.index')->with('success', 'Portal created successfully.');
