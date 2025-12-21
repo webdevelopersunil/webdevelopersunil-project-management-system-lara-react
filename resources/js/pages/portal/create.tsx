@@ -43,6 +43,7 @@ export default function PortalCreate() {
         database_version: '',
         machine_type: 'Windows',
         description: '',
+        is_public: false,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -331,6 +332,20 @@ export default function PortalCreate() {
                                             id="db_backup"
                                             checked={data.db_backup}
                                             onCheckedChange={(checked) => setData('db_backup', checked)}
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        <div className="space-y-0.5">
+                                            <Label htmlFor="db_backup">Exposed To Internet</Label>
+                                            <p className="text-sm text-gray-500">
+                                                Is this portal exposed to the internet?
+                                            </p>
+                                        </div>
+                                        <Switch
+                                            id="db_backup"
+                                            checked={data.is_public}
+                                            onCheckedChange={(checked) => setData('is_public', checked)}
                                         />
                                     </div>
 
