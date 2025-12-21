@@ -13,4 +13,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('portals/', [PortalController::class, 'store'])->name('portal.store');
 
+    Route::delete('/portals/{portal}', [PortalController::class, 'destroy'])->name('portals.destroy');
+
 });

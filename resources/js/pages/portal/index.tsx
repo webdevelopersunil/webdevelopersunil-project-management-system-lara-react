@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage, router } from '@inertiajs/react';
+import ConfirmDelete from "@/components/confirm-delete";
 import {
     Table,
     TableBody,
@@ -448,68 +449,8 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                         </Link>
                                                         <DropdownMenuSeparator />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                                        <AlertDialog>
-                                                            <AlertDialogTrigger asChild>
-                                                                <DropdownMenuItem className="cursor-pointer text-red-600" onSelect={(e) => e.preventDefault()} >
-                                                                    <Trash2 className="mr-2 h-4 w-4" />
-                                                                    Delete Portal
-                                                                </DropdownMenuItem>
-                                                            </AlertDialogTrigger>
-
-                                                            <AlertDialogContent>
-
-                                                                <AlertDialogHeader>
-                                                                    <AlertDialogTitle>Delete Portal</AlertDialogTitle>
-                                                                    <AlertDialogDescription>
-                                                                        Are you sure you want to delete portal "{portal.name}"?
-                                                                        This action cannot be undone.
-                                                                    </AlertDialogDescription>
-                                                                </AlertDialogHeader>
-
-                                                                <AlertDialogFooter>
-                                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                                    <AlertDialogAction 
-                                                                        onClick={() => handleDelete(portal.id)}
-                                                                        className="bg-red-600 hover:bg-red-700"
-                                                                    >
-                                                                        Delete
-                                                                    </AlertDialogAction>
-                                                                </AlertDialogFooter>
-
-                                                            </AlertDialogContent>
-                                                        </AlertDialog>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                                        {/* Diallog Alert */}
+                                                        <ConfirmDelete itemId={portal.id} itemName={portal.name} deleteUrl={`/portals/${portal.id}`} dropItemMenuItemLabel = "Portal Delete"/>
 
 
                                                     </DropdownMenuContent>

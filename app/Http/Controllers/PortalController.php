@@ -132,6 +132,8 @@ class PortalController extends Controller
      */
     public function destroy(Portal $portal)
     {
-        //
+        // $portal->delete();
+
+        return redirect()->route('portal.index')->with('success', 'Portal deleted successfully.');
     }
 }
