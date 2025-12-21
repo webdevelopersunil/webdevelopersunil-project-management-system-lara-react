@@ -12,7 +12,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -151,13 +151,6 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
     const [search, setSearch]   = useState(filters.search || '');
     const [status, setStatus]   = useState(filters.status || '');
     const [debouncedSearch, setDebouncedSearch] = useState(search);
-    
-    // Status badge color mapping
-    const statusColors = {
-        completed: 'bg-green-100 text-green-800 border-green-200',
-        'in-progress': 'bg-gray-100 text-gray-800 border-gray-200',
-        pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    };
 
     // Debounce search input
     useEffect(() => {
