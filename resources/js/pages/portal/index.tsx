@@ -132,6 +132,18 @@ const getDomain = (url:string) => {
     }
 };
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 export default function PortalPage({ portals, total, current_page, last_page, per_page, from, to, filters, links  }: PortalProps) {
 
@@ -182,10 +194,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
     }, [debouncedSearch, status]);
 
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this portal?')) {
-            // Delete logic here
-            console.log('Deleting portal:', id);
-        }
+        console.log('Deleting portal:', id);
     };
 
     const handlePageChange = (page: number) => {
@@ -234,43 +243,6 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                     </div>
                 </div>
 
-                {/* Stats Cards */}
-                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-muted-foreground">
-                                Total Portals
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold">{total}</div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-muted-foreground">
-                                Active Portals
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold text-green-600">
-                                {portals.filter(p => p.status === 'active').length}
-                            </div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-muted-foreground">
-                                Pending Portals
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold text-yellow-600">
-                                {portals.filter(p => p.status === 'pending').length}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div> */}
 
                 {/* Search and Filters */}
                 <Card className="mb-6">
@@ -482,13 +454,71 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                             </DropdownMenuItem>
                                                         </Link>
                                                         <DropdownMenuSeparator />
-                                                        <DropdownMenuItem
-                                                            className="cursor-pointer text-red-600"
-                                                            onClick={() => handleDelete(portal.id)}
-                                                        >
-                                                            <Trash2 className="mr-2 h-4 w-4" />
-                                                            Delete Portal
-                                                        </DropdownMenuItem>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                        <AlertDialog>
+                                                            <AlertDialogTrigger asChild>
+                                                                <DropdownMenuItem className="cursor-pointer text-red-600" onSelect={(e) => e.preventDefault()} >
+                                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                                    Delete Portal
+                                                                </DropdownMenuItem>
+                                                            </AlertDialogTrigger>
+
+                                                            <AlertDialogContent>
+
+                                                                <AlertDialogHeader>
+                                                                    <AlertDialogTitle>Delete Portal</AlertDialogTitle>
+                                                                    <AlertDialogDescription>
+                                                                        Are you sure you want to delete portal "{portal.name}"?
+                                                                        This action cannot be undone.
+                                                                    </AlertDialogDescription>
+                                                                </AlertDialogHeader>
+
+                                                                <AlertDialogFooter>
+                                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                                    <AlertDialogAction 
+                                                                        onClick={() => handleDelete(portal.id)}
+                                                                        className="bg-red-600 hover:bg-red-700"
+                                                                    >
+                                                                        Delete
+                                                                    </AlertDialogAction>
+                                                                </AlertDialogFooter>
+
+                                                            </AlertDialogContent>
+                                                        </AlertDialog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
