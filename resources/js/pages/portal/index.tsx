@@ -428,7 +428,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
 
                                                     {/* Exposed to Internet */}
                                                     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.is_public ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'}`}>
-                                                        {portal.is_public ? '✓' : '✗'} Exposed
+                                                        {portal.is_public ? '✓' : '✗'} Exposed To Internet
                                                     </div>
                                                 </div>
                                             </TableCell>
