@@ -60,15 +60,22 @@ class PortalController extends Controller
     {
         
         $validated = $request->validate([
+
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'required|in:completed,pending,in-progress',
             'url' => 'required|url|max:255',
+            
             'framework' => 'nullable|string|max:255',
             'framework_version' => 'nullable',
             'database' => 'nullable|string|max:255',
             'database_version' => 'nullable',
+            
+            'status' => 'required|in:completed,pending,in-progress',
             'is_public' => 'boolean',
+            'server_backup' => 'nullable|boolean',
+            'database_backup' => 'nullable|boolean',
+            'migrate_to_new_server' => 'nullable|boolean',
+
             'machine_type' => 'nullable|in:Windows,RHEL,Ubuntu,CentOS,Other,Not-Defined',
         ]);
 
@@ -83,8 +90,13 @@ class PortalController extends Controller
         $portal->framework_version = $validated['framework_version'] ?? null;
         $portal->database = $validated['database'] ?? null;
         $portal->database_version = $validated['database_version'] ?? null;
-        $portal->is_public = $validated['is_public'] ?? false;
         $portal->machine_type = $validated['machine_type'] ?? 'Not-Defined';
+        
+        $portal->is_public = $validated['is_public'] ?? false;
+        $portal->server_backup = $validated['server_backup'] ?? false;
+        $portal->db_backup = $validated['database_backup'] ?? false;
+        $portal->migrate_to_new_server = $validated['migrate_to_new_server'] ?? false;
+
         $portal->save();
 
         return redirect()->route('portal.index')->with('success', 'Portal created successfully.');

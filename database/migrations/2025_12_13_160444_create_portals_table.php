@@ -20,18 +20,22 @@ return new class extends Migration
 
             $table->string('url');
             $table->string('domain')->nullable();
-            $table->boolean('active')->default(true);
             $table->string('ip_address')->nullable();
             $table->enum('status', ['completed', 'pending', 'in-progress'])->default('pending');
+            
+            $table->boolean('active')->default(true);
             $table->boolean('server_backup')->default(false);
             $table->boolean('db_backup')->default(false);
             $table->boolean('migrate_to_new_server')->default(false);
-            $table->string('vm_name')->nullable();
+            $table->boolean('is_public')->default(false);
+            
             $table->string('framework')->nullable();
             $table->double('framework_version', 8, 2)->nullable();
             $table->string('database')->nullable();
             $table->double('database_version', 8, 2)->nullable();
-            $table->boolean('is_public')->default(false);
+
+            $table->string('vm_name')->nullable();
+            
             $table->enum('machine_type', ['Windows', 'RHEL', 'Ubuntu', 'CentOS', 'Other','Not-Defined'])->default('Not-Defined');
             
             $table->timestamps();
