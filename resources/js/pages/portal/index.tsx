@@ -133,18 +133,6 @@ const getDomain = (url:string) => {
     }
 };
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-
 
 export default function PortalPage({ portals, total, current_page, last_page, per_page, from, to, filters, links  }: PortalProps) {
 
@@ -152,6 +140,43 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
     const [search, setSearch]   = useState(filters.search || '');
     const [status, setStatus]   = useState(filters.status || '');
     const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+
+
+
+    const { flash } = usePage().props as { flash?: { success?: string; error?: string } };
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+
+    useEffect(() => {
+        if (flash?.success) {
+            setMessage(flash.success);
+            setMessageType('success');
+            setShowMessage(true);
+            
+            // Auto-hide after 5 seconds
+            const timer = setTimeout(() => {
+                setShowMessage(false);
+            }, 5000);
+            
+            return () => clearTimeout(timer);
+        }
+        
+        if (flash?.error) {
+            setMessage(flash.error);
+            setMessageType('error');
+            setShowMessage(true);
+            
+            const timer = setTimeout(() => {
+                setShowMessage(false);
+            }, 5000);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [flash]);
+
+
 
     // Debounce search input
     useEffect(() => {
@@ -269,6 +294,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                         </div>
                     </CardContent>
                 </Card>
+                
 
                 {/* Portals Table */}
                 <Card>
@@ -338,6 +364,9 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                             </TableHeader>
 
 
+                            
+
+
 
                             <TableBody>
                                 {portals.length > 0 ? (
@@ -356,7 +385,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                             <TableCell>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {/* Status Badge */}
-                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold 
+                                                    {/* <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold 
                                                             ${
                                                                 portal.status === 'completed' 
                                                                     ? 'bg-green-100 border-green-300 text-green-800' 
@@ -367,15 +396,20 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                     >
                                                         <div className={`w-1.5 h-1.5 rounded-full ${ portal.status === 'completed' ? 'bg-green-500' : portal.status === 'in-progress' ? 'bg-blue-500' : 'bg-yellow-500' }`} />
                                                         Status : {portal.status === 'completed'  ? 'Completed'  : portal.status === 'in-progress'  ? 'In Progress'  : 'Pending'}
+                                                    </div> */}
+
+                                                    {/* Status of Portal */}
+                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.active ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'}`}>
+                                                        {portal.active ? '✓ Active' : '✗ Inactive'}
                                                     </div>
 
                                                     {/* Server Backup */}
                                                     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${
-                                                        portal.server_backup 
+                                                        portal.db_backup 
                                                             ? 'bg-green-100 border-green-300 text-green-800' 
                                                             : 'bg-red-100 border-red-300 text-red-800'
                                                     }`}>
-                                                        {portal.server_backup ? '✓' : '✗'} Backup
+                                                        {portal.db_backup ? '✓' : '✗'} Backup
                                                     </div>
 
                                                     {/* DB Backup */}

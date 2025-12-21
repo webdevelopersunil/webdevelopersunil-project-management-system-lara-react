@@ -116,7 +116,11 @@ class PortalController extends Controller
      */
     public function edit(Portal $portal)
     {
-        //
+        
+
+        return Inertia::render('portal/edit', [
+            'portal' => $portal,
+        ]);
     }
 
     /**
@@ -124,7 +128,36 @@ class PortalController extends Controller
      */
     public function update(Request $request, Portal $portal)
     {
-        //
+        // If you have validation, do it here
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'url' => 'required|url|max:500',
+            'active' => 'boolean',
+            'ip_address' => 'nullable|ip',
+            'status' => 'required|in:completed,pending,in-progress',
+            'server_backup' => 'boolean',
+            'db_backup' => 'boolean',
+            'migrate_to_new_server' => 'boolean',
+            'domain' => 'nullable|string|max:255',
+            'vm_name' => 'nullable|string|max:255',
+            'framework' => 'nullable|string|max:100',
+            'framework_version' => 'nullable|numeric',
+            'database' => 'nullable|string|max:100',
+            'database_version' => 'nullable|numeric',
+            'is_public' => 'boolean',
+            'machine_type' => 'required|in:Windows,RHEL,Ubuntu,CentOS,Other,Not-Defined',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        // Convert empty strings to null for nullable fields
+        $validated = array_map(function ($value) {
+            return $value === '' ? null : $value;
+        }, $validated);
+
+        $portal->update($validated);
+        
+        return redirect()->route('portal.index')
+            ->with('success', 'Portal updated successfully.');
     }
 
     /**
