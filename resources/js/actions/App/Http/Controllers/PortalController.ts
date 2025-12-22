@@ -219,7 +219,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\PortalController::destroy
-* @see app/Http/Controllers/PortalController.php:166
+* @see app/Http/Controllers/PortalController.php:170
 * @route '/portals/{portal}'
 */
 export const destroy = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -234,7 +234,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalController::destroy
-* @see app/Http/Controllers/PortalController.php:166
+* @see app/Http/Controllers/PortalController.php:170
 * @route '/portals/{portal}'
 */
 destroy.url = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -267,7 +267,7 @@ destroy.url = (args: { portal: number | { id: number } } | [portal: number | { i
 
 /**
 * @see \App\Http\Controllers\PortalController::destroy
-* @see app/Http/Controllers/PortalController.php:166
+* @see app/Http/Controllers/PortalController.php:170
 * @route '/portals/{portal}'
 */
 destroy.delete = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -277,7 +277,7 @@ destroy.delete = (args: { portal: number | { id: number } } | [portal: number | 
 
 /**
 * @see \App\Http\Controllers\PortalController::destroy
-* @see app/Http/Controllers/PortalController.php:166
+* @see app/Http/Controllers/PortalController.php:170
 * @route '/portals/{portal}'
 */
 const destroyForm = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -292,7 +292,7 @@ const destroyForm = (args: { portal: number | { id: number } } | [portal: number
 
 /**
 * @see \App\Http\Controllers\PortalController::destroy
-* @see app/Http/Controllers/PortalController.php:166
+* @see app/Http/Controllers/PortalController.php:170
 * @route '/portals/{portal}'
 */
 destroyForm.delete = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -309,7 +309,7 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\PortalController::edit
-* @see app/Http/Controllers/PortalController.php:117
+* @see app/Http/Controllers/PortalController.php:121
 * @route '/portals/{portal}/edit'
 */
 export const edit = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -324,7 +324,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalController::edit
-* @see app/Http/Controllers/PortalController.php:117
+* @see app/Http/Controllers/PortalController.php:121
 * @route '/portals/{portal}/edit'
 */
 edit.url = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -357,7 +357,7 @@ edit.url = (args: { portal: number | { id: number } } | [portal: number | { id: 
 
 /**
 * @see \App\Http\Controllers\PortalController::edit
-* @see app/Http/Controllers/PortalController.php:117
+* @see app/Http/Controllers/PortalController.php:121
 * @route '/portals/{portal}/edit'
 */
 edit.get = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -367,7 +367,7 @@ edit.get = (args: { portal: number | { id: number } } | [portal: number | { id: 
 
 /**
 * @see \App\Http\Controllers\PortalController::edit
-* @see app/Http/Controllers/PortalController.php:117
+* @see app/Http/Controllers/PortalController.php:121
 * @route '/portals/{portal}/edit'
 */
 edit.head = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -377,7 +377,7 @@ edit.head = (args: { portal: number | { id: number } } | [portal: number | { id:
 
 /**
 * @see \App\Http\Controllers\PortalController::edit
-* @see app/Http/Controllers/PortalController.php:117
+* @see app/Http/Controllers/PortalController.php:121
 * @route '/portals/{portal}/edit'
 */
 const editForm = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -387,7 +387,7 @@ const editForm = (args: { portal: number | { id: number } } | [portal: number | 
 
 /**
 * @see \App\Http\Controllers\PortalController::edit
-* @see app/Http/Controllers/PortalController.php:117
+* @see app/Http/Controllers/PortalController.php:121
 * @route '/portals/{portal}/edit'
 */
 editForm.get = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -397,7 +397,7 @@ editForm.get = (args: { portal: number | { id: number } } | [portal: number | { 
 
 /**
 * @see \App\Http\Controllers\PortalController::edit
-* @see app/Http/Controllers/PortalController.php:117
+* @see app/Http/Controllers/PortalController.php:121
 * @route '/portals/{portal}/edit'
 */
 editForm.head = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -414,7 +414,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\PortalController::update
-* @see app/Http/Controllers/PortalController.php:129
+* @see app/Http/Controllers/PortalController.php:133
 * @route '/portals/{portal}'
 */
 export const update = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -429,7 +429,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalController::update
-* @see app/Http/Controllers/PortalController.php:129
+* @see app/Http/Controllers/PortalController.php:133
 * @route '/portals/{portal}'
 */
 update.url = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -462,7 +462,7 @@ update.url = (args: { portal: number | { id: number } } | [portal: number | { id
 
 /**
 * @see \App\Http\Controllers\PortalController::update
-* @see app/Http/Controllers/PortalController.php:129
+* @see app/Http/Controllers/PortalController.php:133
 * @route '/portals/{portal}'
 */
 update.put = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -472,7 +472,7 @@ update.put = (args: { portal: number | { id: number } } | [portal: number | { id
 
 /**
 * @see \App\Http\Controllers\PortalController::update
-* @see app/Http/Controllers/PortalController.php:129
+* @see app/Http/Controllers/PortalController.php:133
 * @route '/portals/{portal}'
 */
 const updateForm = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -487,7 +487,7 @@ const updateForm = (args: { portal: number | { id: number } } | [portal: number 
 
 /**
 * @see \App\Http\Controllers\PortalController::update
-* @see app/Http/Controllers/PortalController.php:129
+* @see app/Http/Controllers/PortalController.php:133
 * @route '/portals/{portal}'
 */
 updateForm.put = (args: { portal: number | { id: number } } | [portal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

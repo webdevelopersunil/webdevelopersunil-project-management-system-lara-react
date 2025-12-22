@@ -35,9 +35,8 @@ import {
     Plus, 
     MoreVertical, 
     Edit, 
-    Trash2, 
     Eye, 
-    Filter,
+    Info,
     ChevronLeft,
     ChevronRight,
     ChevronsLeft,
@@ -329,6 +328,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                 <TableRow>
                                     <TableHead>#</TableHead>
                                     <TableHead>Portal Detail</TableHead>
+                                    <TableHead>More Info.</TableHead>
                                     <TableHead>
                                         <div className="flex items-center gap-2 text-xs font-semibold uppercase text-gray-700">
                                             <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded">
@@ -393,21 +393,16 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                             </TableCell>
 
                                             <TableCell>
-                                                <div className="flex flex-wrap gap-1.5">
-                                                    {/* Status Badge */}
-                                                    {/* <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold 
-                                                            ${
-                                                                portal.status === 'completed' 
-                                                                    ? 'bg-green-100 border-green-300 text-green-800' 
-                                                                    : portal.status === 'in-progress' 
-                                                                        ? 'bg-blue-100 border-blue-300 text-blue-800' 
-                                                                        : 'bg-yellow-100 border-yellow-300 text-yellow-800'
-                                                            }`}
-                                                    >
-                                                        <div className={`w-1.5 h-1.5 rounded-full ${ portal.status === 'completed' ? 'bg-green-500' : portal.status === 'in-progress' ? 'bg-blue-500' : 'bg-yellow-500' }`} />
-                                                        Status : {portal.status === 'completed'  ? 'Completed'  : portal.status === 'in-progress'  ? 'In Progress'  : 'Pending'}
-                                                    </div> */}
+                                                <div className="flex items-center gap-2">
+                                                    <Link href={'/portals/' + portal.id} className="text-muted-foreground hover:text-primary" aria-label="More info" >
+                                                        <Info size={16} className="text-muted-foreground cursor-pointer hover:text-primary" aria-label="More info"/>
+                                                    </Link>
+                                                </div>
+                                            </TableCell>
 
+                                            <TableCell>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    
                                                     {/* Status of Portal */}
                                                     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.active ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'}`}>
                                                         {portal.active ? '✓ Active' : '✗ Inactive'}
