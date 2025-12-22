@@ -333,7 +333,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                         <div className="flex items-center gap-2 text-xs font-semibold uppercase text-gray-700">
                                             <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded">
                                                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                                <span>Portal Status</span>
+                                                <span>Status</span>
                                             </div>
                                             <span className="text-gray-400">|</span>
                                             <div className="flex items-center gap-1 px-2 py-1 bg-purple-50 rounded">
@@ -355,10 +355,20 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                                 <span>Public</span>
                                             </div>
+
+
+                                            <span className="text-gray-400">|</span>
+                                            <div className="flex items-center gap-1 px-2 py-1 bg-green-50 rounded">
+                                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                <span>Framework(Version)</span>
+                                            </div>
+                                            <span className="text-gray-400">|</span>
+                                            <div className="flex items-center gap-1 px-2 py-1 bg-green-50 rounded">
+                                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                <span>Database(Version)</span>
+                                            </div>
                                         </div>
                                     </TableHead>
-                                    <TableHead>Framework (Version)</TableHead>
-                                    <TableHead>Database (Version)</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -430,35 +440,33 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.is_public ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'}`}>
                                                         {portal.is_public ? '✓' : '✗'} Exposed To Internet
                                                     </div>
+
+                                                    {/* Framework Version */}
+                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.is_public ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'}`}>
+                                                        <span className="font-medium text-red-800">{portal.framework}</span>
+                                                        <span className={`text-xs px-1 py-0.5 rounded ${
+                                                            portal.framework_version 
+                                                                ? 'bg-gray-100 text-gray-700' 
+                                                                : 'bg-red-100 text-red-700 font-bold'
+                                                        }`}>
+                                                            ({portal.framework_version || '?'})
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Database Version */}
+                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.is_public ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'}`}>
+                                                        <span className="font-medium text-red-800">{portal.database}</span>
+                                                        <span className={`text-xs px-1 py-0.5 rounded ${
+                                                            portal.database_version 
+                                                                ? 'bg-gray-100 text-gray-700' 
+                                                                : 'bg-red-100 text-red-700 font-bold'
+                                                        }`}>
+                                                            ({portal.database_version || '?'})
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </TableCell>
 
-                                            <TableCell>
-                                                <div className="flex items-center gap-1">
-                                                    <span className="font-medium text-red-800">{portal.framework}</span>
-                                                    <span className={`text-xs px-1 py-0.5 rounded ${
-                                                        portal.framework_version 
-                                                            ? 'bg-gray-100 text-gray-700' 
-                                                            : 'bg-red-100 text-red-700 font-bold'
-                                                    }`}>
-                                                        ({portal.framework_version || '?'})
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-
-                                            <TableCell>
-                                                <div className="flex items-center gap-1">
-                                                    <span className="font-medium text-red-800">{portal.database}</span>
-                                                    <span className={`text-xs px-1 py-0.5 rounded ${
-                                                        portal.database_version 
-                                                            ? 'bg-gray-100 text-gray-700' 
-                                                            : 'bg-red-100 text-red-700 font-bold'
-                                                    }`}>
-                                                        ({portal.database_version || '?'})
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-                                            
                                             <TableCell className="text-right">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
