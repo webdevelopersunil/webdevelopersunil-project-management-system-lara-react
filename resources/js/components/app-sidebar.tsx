@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Paperclip } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Paperclip, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -26,6 +26,11 @@ const mainNavItems: NavItem[] = [
         title: 'Portals',
         href: '/portals/',
         icon: Paperclip,
+    },
+    {
+        title: 'Users',
+        href: '/users/',
+        icon: Users,
     }
 ];
 
