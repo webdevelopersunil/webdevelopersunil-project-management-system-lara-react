@@ -109,7 +109,7 @@ class PortalController extends Controller
     public function show(Portal $portal)
     {
         Portal::findOrFail($portal->id);
-
+        
         return Inertia::render('portal/show', [
             'portal' => $portal,
         ]);

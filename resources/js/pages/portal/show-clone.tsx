@@ -52,7 +52,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
   {
     title: 'Portals',
-    href: 'portals().url',
+    href: dashboard().url,
   },
   {
     title: 'Portal Details',
