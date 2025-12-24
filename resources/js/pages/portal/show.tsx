@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+
 import { 
   Globe,
   Server,
@@ -52,7 +53,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
   {
     title: 'Portals',
-    href: 'portals().url',
+    href: '/portals',
   },
   {
     title: 'Portal Details',
@@ -63,7 +64,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 // Mock data for portal details
 const portalData = {
   id: 1,
-  name: 'Customer Portal Pro',
+  name: 'CustomerPro Portal',
   description: 'Advanced customer management portal with AI-powered insights and real-time analytics dashboard.',
   owner: {
     name: 'Alex Johnson',
@@ -92,7 +93,85 @@ const portalData = {
     response_time: '145ms',
     daily_visitors: 12500,
     storage_used: '78%',
-    monthly_growth: '24%'
+    monthly_growth: '24'
+  }
+};
+
+// Add these data objects near your other mock data (after portalData)
+
+// Configuration data
+const configurationData = {
+  server: {
+    cpu_cores: 8,
+    memory_gb: 32,
+    storage_gb: 500,
+    os_version: 'Ubuntu 22.04 LTS',
+    kernel_version: '5.15.0-91-generic',
+    php_version: '8.2',
+    node_version: '18.17.0',
+    redis_enabled: true,
+    varnish_enabled: false,
+    load_balancer: 'nginx'
+  },
+  network: {
+    firewall: 'enabled',
+    ssl_cert: 'Let\'s Encrypt',
+    ssl_expiry: '2024-06-30',
+    cdn: 'Cloudflare',
+    ddos_protection: true,
+    bandwidth_limit: '100 GB/month',
+    ports_open: [80, 443, 22]
+  },
+  security: {
+    two_factor_auth: true,
+    password_policy: 'strict',
+    session_timeout: '30 minutes',
+    audit_logging: true
+  }
+};
+
+// Monitoring data
+const monitoringData = {
+  metrics: {
+    cpu_usage: 45,
+    memory_usage: 62,
+    disk_usage: 78,
+    network_in: '125 MB/s',
+    network_out: '89 MB/s',
+    request_rate: '1,250 req/sec',
+    error_rate: '0.8%'
+  },
+  alerts: [
+    { id: 1, type: 'warning', message: 'High memory usage detected', time: '2 hours ago' },
+    { id: 2, type: 'info', message: 'Database backup completed', time: '5 hours ago' }
+  ],
+  logs: [
+    { id: 1, type: 'access', message: 'User login from IP 192.168.1.50', time: '10:30 AM' },
+    { id: 2, type: 'system', message: 'Cache cleared successfully', time: '10:15 AM' }
+  ]
+};
+
+// Settings data
+const settingsData = {
+  general: {
+    portal_name: 'CustomerPro Portal',
+    contact_email: 'support@customerpro.com',
+    timezone: 'UTC',
+    language: 'English'
+  },
+  notifications: {
+    email_alerts: true,
+    slack_alerts: false,
+    alert_types: {
+      system_down: true,
+      high_cpu: true,
+      disk_space: true
+    }
+  },
+  integrations: {
+    google_analytics: true,
+    sentry: true,
+    datadog: false
   }
 };
 
@@ -482,6 +561,101 @@ export default function PortalShow() {
               </>
             )}
 
+            {/* Configuration Tab */}
+{activeTab === 'configuration' && (
+  <div className="space-y-6">
+    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
+        <Server className="h-5 w-5" />
+        Server Configuration
+      </h2>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">CPU Cores</span>
+            <span className="font-medium">{configurationData.server.cpu_cores} cores</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Memory</span>
+            <span className="font-medium">{configurationData.server.memory_gb} GB</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">PHP Version</span>
+            <span className="font-medium">{configurationData.server.php_version}</span>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Redis</span>
+            {configurationData.server.redis_enabled ? (
+              <CheckCircle className="h-5 w-5 text-green-500" />
+            ) : (
+              <XCircle className="h-5 w-5 text-red-500" />
+            )}
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Load Balancer</span>
+            <span className="font-medium">{configurationData.server.load_balancer}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">OS Version</span>
+            <span className="font-medium">{configurationData.server.os_version}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
+        <Network className="h-5 w-5" />
+        Network & Security
+      </h2>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Firewall</span>
+            <span className="font-medium">{configurationData.network.firewall}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">SSL Certificate</span>
+            <span className="font-medium">{configurationData.network.ssl_cert}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">DDoS Protection</span>
+            {configurationData.network.ddos_protection ? (
+              <CheckCircle className="h-5 w-5 text-green-500" />
+            ) : (
+              <XCircle className="h-5 w-5 text-red-500" />
+            )}
+          </div>
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Two-Factor Auth</span>
+            {configurationData.security.two_factor_auth ? (
+              <CheckCircle className="h-5 w-5 text-green-500" />
+            ) : (
+              <XCircle className="h-5 w-5 text-red-500" />
+            )}
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Session Timeout</span>
+            <span className="font-medium">{configurationData.security.session_timeout}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Audit Logging</span>
+            {configurationData.security.audit_logging ? (
+              <CheckCircle className="h-5 w-5 text-green-500" />
+            ) : (
+              <XCircle className="h-5 w-5 text-red-500" />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
             {activeTab === 'collaborations' && (
               <div className="rounded-xl border border-sidebar-border/70 bg-card dark:border-sidebar-border">
                 <div className="border-b border-sidebar-border/70 p-6 dark:border-sidebar-border">
@@ -571,6 +745,171 @@ export default function PortalShow() {
                 </div>
               </div>
             )}
+
+
+
+
+{/* Monitoring Tab */}
+{activeTab === 'monitoring' && (
+  <div className="space-y-6">
+    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
+        <Activity className="h-5 w-5" />
+        System Metrics
+      </h2>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-4">
+          <div>
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-400">CPU Usage</span>
+              <span className="font-medium">{monitoringData.metrics.cpu_usage}%</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div 
+                className="h-full rounded-full bg-blue-500"
+                style={{ width: `${monitoringData.metrics.cpu_usage}%` }}
+              />
+            </div>
+          </div>
+          <div>
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Memory Usage</span>
+              <span className="font-medium">{monitoringData.metrics.memory_usage}%</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div 
+                className="h-full rounded-full bg-green-500"
+                style={{ width: `${monitoringData.metrics.memory_usage}%` }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Network In</span>
+            <span className="font-medium">{monitoringData.metrics.network_in}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Request Rate</span>
+            <span className="font-medium">{monitoringData.metrics.request_rate}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Error Rate</span>
+            <span className="font-medium">{monitoringData.metrics.error_rate}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
+        <Bell className="h-5 w-5" />
+        Recent Alerts
+      </h2>
+      <div className="space-y-3">
+        {monitoringData.alerts.map((alert) => (
+          <div key={alert.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
+            <div className="flex items-center gap-3">
+              {alert.type === 'warning' && <AlertCircle className="h-5 w-5 text-amber-500" />}
+              {alert.type === 'info' && <CheckCircle className="h-5 w-5 text-blue-500" />}
+              <div>
+                <p className="font-medium text-gray-900 dark:text-white">{alert.message}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{alert.time}</p>
+              </div>
+            </div>
+            <button className="text-sm text-primary hover:underline">View</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Settings Tab */}
+{activeTab === 'settings' && (
+  <div className="space-y-6">
+    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
+        <Settings className="h-5 w-5" />
+        General Settings
+      </h2>
+      <div className="space-y-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Portal Name</label>
+            <input
+              type="text"
+              defaultValue={settingsData.general.portal_name}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Timezone</label>
+            <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800">
+              <option>UTC</option>
+              <option>America/New_York</option>
+              <option>Europe/London</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Contact Email</label>
+          <input
+            type="email"
+            defaultValue={settingsData.general.contact_email}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
+        <Bell className="h-5 w-5" />
+        Notifications
+      </h2>
+      <div className="space-y-3">
+        <label className="flex items-center justify-between">
+          <span className="text-sm text-gray-700 dark:text-gray-300">Email Alerts</span>
+          <input
+            type="checkbox"
+            defaultChecked={settingsData.notifications.email_alerts}
+            className="h-4 w-4 rounded border-gray-300"
+          />
+        </label>
+        <label className="flex items-center justify-between">
+          <span className="text-sm text-gray-700 dark:text-gray-300">Slack Alerts</span>
+          <input
+            type="checkbox"
+            defaultChecked={settingsData.notifications.slack_alerts}
+            className="h-4 w-4 rounded border-gray-300"
+          />
+        </label>
+        <label className="flex items-center justify-between">
+          <span className="text-sm text-gray-700 dark:text-gray-300">System Down Alerts</span>
+          <input
+            type="checkbox"
+            defaultChecked={settingsData.notifications.alert_types.system_down}
+            className="h-4 w-4 rounded border-gray-300"
+          />
+        </label>
+      </div>
+    </div>
+
+    <div className="flex items-center justify-end gap-3">
+      <button className="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50 dark:border-gray-700">
+        Cancel
+      </button>
+      <button className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary/90">
+        Save Changes
+      </button>
+    </div>
+  </div>
+)}
+
+
+
+
           </div>
 
           {/* Right Column - Sidebar Cards */}
