@@ -6,6 +6,9 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\PortalSeeder;
+use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\UserSeeder;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,16 +19,9 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::firstOrCreate(
-            ['email' => 'sunil@gmail.com'],
-            [
-                'name' => 'Sunil Thakur',
-                'password' => 'welcome@123',
-                'email_verified_at' => now(),
-            ]
-        );
-
         $this->call([
+            RolePermissionSeeder::class,
+            UserSeeder::class,
             PortalSeeder::class,
         ]);
 
