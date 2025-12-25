@@ -328,7 +328,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                 <TableRow>
                                     <TableHead>#</TableHead>
                                     <TableHead>Portal Detail</TableHead>
-                                    <TableHead>More Info.</TableHead>
+                                    {/* <TableHead>More Info.</TableHead> */}
                                     <TableHead>
                                         <div className="flex items-center gap-2 text-xs font-semibold uppercase text-gray-700">
                                             <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded">
@@ -392,13 +392,13 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                 </p>
                                             </TableCell>
 
-                                            <TableCell>
+                                            {/* <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     <Link href={'/portals/' + portal.id} className="text-muted-foreground hover:text-primary" aria-label="More info" >
                                                         <Info size={16} className="text-muted-foreground cursor-pointer hover:text-primary" aria-label="More info"/>
                                                     </Link>
                                                 </div>
-                                            </TableCell>
+                                            </TableCell> */}
 
                                             <TableCell>
                                                 <div className="flex flex-wrap gap-1.5">
@@ -414,7 +414,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                             ? 'bg-green-100 border-green-300 text-green-800' 
                                                             : 'bg-red-100 border-red-300 text-red-800'
                                                     }`}>
-                                                        {portal.db_backup ? '✓' : '✗'} Backup
+                                                        {portal.db_backup ? '✓' : '✗'} DB Backup
                                                     </div>
 
                                                     {/* DB Backup */}

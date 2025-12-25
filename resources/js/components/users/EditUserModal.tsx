@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   Dialog,
@@ -27,7 +27,9 @@ import {
   X,
   Plus,
   User,
-  Info
+  Info,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 interface EditUserModalProps {
@@ -66,12 +68,26 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
   const [userStatus, setUserStatus] = useState('active');
   const [showPermissions, setShowPermissions] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen && userId) {
       fetchUserData();
     }
   }, [isOpen, userId]);
+
+  // Scroll to bottom when permissions section is shown
+  useEffect(() => {
+    if (showPermissions && scrollAreaRef.current) {
+      // Small delay to ensure content is rendered
+      setTimeout(() => {
+        if (scrollAreaRef.current) {
+          scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+        }
+      }, 100);
+    }
+  }, [showPermissions]);
 
   const fetchUserData = async () => {
     try {
@@ -185,14 +201,18 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
     return colors[role] || 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
   };
 
+  const togglePermissions = () => {
+    setShowPermissions(!showPermissions);
+  };
+
   if (!isOpen || !userId) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden">
+      <DialogContent className="max-w-4xl h-[85vh] p-0 overflow-hidden flex flex-col">
         <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="px-6 py-4 border-b">
+          {/* Header - Fixed */}
+          <div className="px-6 py-4 border-b flex-shrink-0">
             <DialogHeader className="text-left">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -212,8 +232,11 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
             </DialogHeader>
           </div>
 
-          {/* Main Content */}
-          <ScrollArea className="flex-1 px-6 py-4">
+          {/* Main Content - Scrollable */}
+          <ScrollArea 
+            ref={scrollAreaRef}
+            className="flex-1 px-6 py-4"
+          >
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -232,7 +255,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
                 </Button>
               </div>
             ) : user && (
-              <div className="space-y-6">
+              <div className="space-y-6 pb-4">
                 {/* Error Message */}
                 {error && (
                   <div className="rounded-lg bg-red-50 p-4 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
@@ -328,11 +351,21 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setShowPermissions(!showPermissions)}
+                      onClick={togglePermissions}
                       className="gap-2"
                     >
                       <Key className="h-3.5 w-3.5" />
-                      {showPermissions ? 'Hide Permissions' : 'Show Permissions'}
+                      {showPermissions ? (
+                        <>
+                          <ChevronUp className="h-3.5 w-3.5" />
+                          Hide Permissions
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="h-3.5 w-3.5" />
+                          Show Permissions
+                        </>
+                      )}
                     </Button>
                   </div>
 
@@ -423,10 +456,13 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
                 {showPermissions && (
                   <>
                     <Separator />
-                    <div className="space-y-4">
+                    <div className="space-y-4" id="permissions-section">
                       <div className="flex items-center gap-2">
                         <Key className="h-5 w-5 text-primary" />
                         <h4 className="font-semibold">Direct Permissions</h4>
+                        <Badge variant="outline" className="ml-2">
+                          {selectedPermissions.length} selected
+                        </Badge>
                       </div>
 
                       {/* Selected Permissions */}
@@ -461,31 +497,33 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
                       {/* Available Permissions */}
                       <div>
                         <Label className="text-sm font-medium mb-3 block">Available Permissions</Label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-60 overflow-y-auto p-1">
-                          {allPermissions.map((permission) => (
-                            <div 
-                              key={permission} 
-                              className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                                selectedPermissions.includes(permission)
-                                  ? 'bg-primary/10 border-primary'
-                                  : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
-                              }`}
-                              onClick={() => handlePermissionToggle(permission)}
-                            >
-                              <Checkbox
-                                id={`permission-${permission}`}
-                                checked={selectedPermissions.includes(permission)}
-                                className="h-4 w-4"
-                              />
-                              <Label
-                                htmlFor={`permission-${permission}`}
-                                className="flex-1 cursor-pointer text-sm truncate"
+                        <ScrollArea className="h-48 rounded-lg border">
+                          <div className="grid grid-cols-1 gap-2 p-4">
+                            {allPermissions.map((permission) => (
+                              <div 
+                                key={permission} 
+                                className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
+                                  selectedPermissions.includes(permission)
+                                    ? 'bg-primary/10 border border-primary'
+                                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                                }`}
+                                onClick={() => handlePermissionToggle(permission)}
                               >
-                                {permission}
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
+                                <Checkbox
+                                  id={`permission-${permission}`}
+                                  checked={selectedPermissions.includes(permission)}
+                                  className="h-4 w-4"
+                                />
+                                <Label
+                                  htmlFor={`permission-${permission}`}
+                                  className="flex-1 cursor-pointer text-sm truncate"
+                                >
+                                  {permission}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
                       </div>
 
                       {/* Add Custom Permission */}
@@ -543,8 +581,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex justify-end gap-3 pt-4">
+                {/* Action Buttons - Fixed at bottom */}
+                <div className="flex justify-end gap-3 pt-6 pb-2">
                   <Button 
                     variant="outline" 
                     onClick={onClose} 
