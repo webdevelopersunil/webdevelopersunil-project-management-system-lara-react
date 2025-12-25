@@ -1,9 +1,8 @@
-// users/index.tsx
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { 
   Users, 
   UserPlus, 
@@ -23,9 +22,12 @@ import {
   Clock,
   BarChart3,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Key,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -34,6 +36,37 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import EditUserModal from '@/components/users/EditUserModal';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import axios from 'axios';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  email_verified_at: string | null;
+  created_at: string;
+  status: string;
+  roles: string[];
+  permissions: string[];
+  is_verified: boolean;
+  last_login?: string;
+}
+
+interface PageProps {
+  users: User[];
+  availableRoles: string[];
+  availablePermissions: string[];
+  statistics: {
+    total: number;
+    active: number;
+    pending: number;
+    inactive: number;
+    verified: number;
+    by_role: Record<string, number>;
+  };
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -46,119 +79,59 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-// Mock users data - replace with real data from controller
-const mockUsers = [
-  {
-    id: 1,
-    name: 'Sunil Thakur',
-    email: 'sunil@gmail.com',
-    email_verified_at: '2025-12-22 05:44:46',
-    status: 'active',
-    role: 'Admin',
-    created_at: '2025-12-22 05:44:46',
-    last_login: '2025-01-20 14:30:00'
-  },
-  {
-    id: 2,
-    name: 'Alex Johnson',
-    email: 'alex@company.com',
-    email_verified_at: '2025-12-20 10:15:30',
-    status: 'active',
-    role: 'Manager',
-    created_at: '2025-12-15 08:20:00',
-    last_login: '2025-01-19 09:45:00'
-  },
-  {
-    id: 3,
-    name: 'Sarah Chen',
-    email: 'sarah@dev.com',
-    email_verified_at: null,
-    status: 'pending',
-    role: 'Developer',
-    created_at: '2025-12-28 14:10:00',
-    last_login: null
-  },
-  {
-    id: 4,
-    name: 'Mike Rodriguez',
-    email: 'mike@ops.com',
-    email_verified_at: '2025-12-25 16:45:00',
-    status: 'active',
-    role: 'DevOps',
-    created_at: '2025-12-22 11:30:00',
-    last_login: '2025-01-18 16:20:00'
-  },
-  {
-    id: 5,
-    name: 'Emma Wilson',
-    email: 'emma@design.com',
-    email_verified_at: null,
-    status: 'inactive',
-    role: 'Designer',
-    created_at: '2025-12-10 09:15:00',
-    last_login: '2025-01-10 12:00:00'
-  },
-  {
-    id: 6,
-    name: 'David Park',
-    email: 'david@qa.com',
-    email_verified_at: '2025-12-18 13:20:00',
-    status: 'active',
-    role: 'QA Engineer',
-    created_at: '2025-12-05 15:45:00',
-    last_login: '2025-01-20 10:15:00'
-  },
-  {
-    id: 7,
-    name: 'Lisa Brown',
-    email: 'lisa@support.com',
-    email_verified_at: '2025-12-30 17:30:00',
-    status: 'active',
-    role: 'Support',
-    created_at: '2025-12-25 10:00:00',
-    last_login: '2025-01-19 14:45:00'
-  },
-  {
-    id: 8,
-    name: 'Robert Kim',
-    email: 'robert@analytics.com',
-    email_verified_at: null,
-    status: 'suspended',
-    role: 'Analyst',
-    created_at: '2025-12-12 12:15:00',
-    last_login: '2025-01-05 11:30:00'
-  }
-];
-
 export default function UsersIndex() {
+  
+  const { props } = usePage<PageProps>();
+  const { users: initialUsers, statistics, availableRoles } = props;
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [editingUserId, setEditingUserId] = useState<number | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const itemsPerPage = 10;
 
-  // Get users from controller (you'll replace mockUsers with this)
-  // const { users } = usePage().props;
-  
-  // For now, use mock data
-  const users = mockUsers;
+  // Refresh users data
+  const refreshUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/users');
+      setUsers(response.data.users);
+    } catch (error) {
+      console.error('Error refreshing users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Calculate statistics
-  const stats = {
+  // Calculate statistics from current filtered users
+  const currentStats = {
     total: users.length,
     active: users.filter(u => u.status === 'active').length,
     pending: users.filter(u => u.status === 'pending').length,
     inactive: users.filter(u => u.status === 'inactive').length,
-    verified: users.filter(u => u.email_verified_at).length,
-    admins: users.filter(u => u.role === 'Admin').length
+    verified: users.filter(u => u.is_verified).length,
+    admins: users.filter(u => u.roles.includes('admin')).length,
+    developers: users.filter(u => u.roles.includes('developer')).length,
+    projectManagers: users.filter(u => u.roles.includes('project-manager')).length,
+    requestors: users.filter(u => u.roles.includes('requestor')).length,
   };
 
   // Filter users
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = selectedRole === 'all' || user.role === selectedRole;
+    
+    const matchesRole = selectedRole === 'all' || 
+                       (selectedRole === 'has-role' && user.roles.length > 0) ||
+                       (selectedRole === 'no-role' && user.roles.length === 0) ||
+                       user.roles.includes(selectedRole);
+    
     const matchesStatus = selectedStatus === 'all' || user.status === selectedStatus;
+    
     return matchesSearch && matchesRole && matchesStatus;
   });
 
@@ -189,23 +162,55 @@ export default function UsersIndex() {
   };
 
   // Role badge configuration
-  const getRoleBadge = (role: string) => {
-    const colors = {
-      Admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-      Manager: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-      Developer: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-      DevOps: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
-      Designer: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400',
-      'QA Engineer': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-      Support: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
-      Analyst: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400'
-    }[role] || 'bg-gray-100 text-gray-800';
+  const getRoleBadges = (roles: string[]) => {
+    if (roles.length === 0) {
+      return (
+        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+          No Role
+        </span>
+      );
+    }
 
     return (
-      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${colors}`}>
-        {role}
-      </span>
+      <div className="flex flex-wrap gap-1">
+        {roles.map((role) => {
+          const colors: Record<string, string> = {
+            'admin': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+            'project-manager': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+            'developer': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+            'requestor': 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
+          };
+
+          return (
+            <span 
+              key={role}
+              className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                colors[role] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+              }`}
+            >
+              {role}
+            </span>
+          );
+        })}
+      </div>
     );
+  };
+
+  // Handle edit user
+  const handleEditUser = (userId: number) => {
+    setEditingUserId(userId);
+    setIsEditModalOpen(true);
+  };
+
+  // Handle modal close
+  const handleModalClose = () => {
+    setIsEditModalOpen(false);
+    setEditingUserId(null);
+  };
+
+  // Handle success after editing
+  const handleEditSuccess = () => {
+    refreshUsers();
   };
 
   return (
@@ -223,20 +228,30 @@ export default function UsersIndex() {
               Manage all users and their permissions
             </p>
           </div>
-          <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
-            <UserPlus className="h-4 w-4" />
-            Add New User
-          </button>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={refreshUsers}
+              disabled={loading}
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
+              <UserPlus className="h-4 w-4" />
+              Add New User
+            </button>
+          </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* Total Users */}
           <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Users</p>
-                <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+                <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{currentStats.total}</p>
               </div>
               <div className="rounded-lg bg-primary/10 p-3 dark:bg-primary/20">
                 <Users className="h-6 w-6 text-primary" />
@@ -249,8 +264,10 @@ export default function UsersIndex() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Users</p>
-                <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{stats.active}</p>
-                <p className="mt-1 text-sm text-gray-500">{Math.round((stats.active / stats.total) * 100)}% of total</p>
+                <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{currentStats.active}</p>
+                <p className="mt-1 text-sm text-gray-500">
+                  {currentStats.total > 0 ? Math.round((currentStats.active / currentStats.total) * 100) : 0}% of total
+                </p>
               </div>
               <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900/30">
                 <UserCheck className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -263,7 +280,7 @@ export default function UsersIndex() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Verified Users</p>
-                <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{stats.verified}</p>
+                <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{currentStats.verified}</p>
                 <p className="mt-1 text-sm text-gray-500">Email verified</p>
               </div>
               <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900/30">
@@ -272,25 +289,28 @@ export default function UsersIndex() {
             </div>
           </div>
 
-          {/* Pending Users */}
+          {/* Role Distribution */}
           <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending</p>
-                <div className="mt-2 flex items-center space-x-4">
-                  <div>
-                    <p className="text-xl font-bold text-gray-900 dark:text-white">{stats.pending}</p>
-                    <p className="text-xs text-gray-500">Verification</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Role Distribution</p>
+                <div className="mt-2 space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-400">Admins</span>
+                    <span className="font-medium">{currentStats.admins}</span>
                   </div>
-                  <div className="h-8 w-px bg-gray-200 dark:bg-gray-700" />
-                  <div>
-                    <p className="text-xl font-bold text-gray-900 dark:text-white">{stats.inactive}</p>
-                    <p className="text-xs text-gray-500">Inactive</p>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-400">Project Managers</span>
+                    <span className="font-medium">{currentStats.projectManagers}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-400">Developers</span>
+                    <span className="font-medium">{currentStats.developers}</span>
                   </div>
                 </div>
               </div>
-              <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900/30">
-                <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+              <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900/30">
+                <Key className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
             </div>
           </div>
@@ -308,7 +328,7 @@ export default function UsersIndex() {
                 </p>
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 {/* Search */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -328,11 +348,13 @@ export default function UsersIndex() {
                   onChange={(e) => setSelectedRole(e.target.value)}
                 >
                   <option value="all">All Roles</option>
-                  <option value="Admin">Admin</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Developer">Developer</option>
-                  <option value="Designer">Designer</option>
-                  <option value="DevOps">DevOps</option>
+                  <option value="has-role">Has Role</option>
+                  <option value="no-role">No Role</option>
+                  {availableRoles.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
                 </select>
                 
                 {/* Status Filter */}
@@ -368,7 +390,7 @@ export default function UsersIndex() {
                     Status
                   </TableHead>
                   <TableHead className="whitespace-nowrap text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-400">
-                    Role
+                    Roles
                   </TableHead>
                   <TableHead className="whitespace-nowrap text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-400">
                     Email Verified
@@ -407,10 +429,10 @@ export default function UsersIndex() {
                       {getStatusBadge(user.status)}
                     </TableCell>
                     <TableCell>
-                      {getRoleBadge(user.role)}
+                      {getRoleBadges(user.roles)}
                     </TableCell>
                     <TableCell>
-                      {user.email_verified_at ? (
+                      {user.is_verified ? (
                         <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
                           <CheckCircle className="h-4 w-4" />
                           <span className="text-sm">Verified</span>
@@ -430,11 +452,14 @@ export default function UsersIndex() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <button className="text-gray-400 hover:text-primary dark:hover:text-primary">
-                          <Eye className="h-4 w-4" />
+                        <button 
+                          className="text-gray-400 hover:text-primary dark:hover:text-primary"
+                          onClick={() => handleEditUser(user.id)}
+                        >
+                          <Edit className="h-4 w-4" />
                         </button>
                         <button className="text-gray-400 hover:text-primary dark:hover:text-primary">
-                          <Edit className="h-4 w-4" />
+                          <Eye className="h-4 w-4" />
                         </button>
                         <button className="text-gray-400 hover:text-red-500 dark:hover:text-red-400">
                           <MoreVertical className="h-4 w-4" />
@@ -447,10 +472,23 @@ export default function UsersIndex() {
             </Table>
           </div>
 
+          {/* Empty State */}
+          {filteredUsers.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Users className="h-12 w-12 text-gray-400" />
+              <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
+                No users found
+              </h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Try adjusting your search or filter criteria
+              </p>
+            </div>
+          )}
+
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="border-t border-sidebar-border/70 px-6 py-4 dark:border-sidebar-border">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
                   Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
                   <span className="font-medium">
@@ -507,6 +545,14 @@ export default function UsersIndex() {
           )}
         </div>
       </div>
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        isOpen={isEditModalOpen}
+        onClose={handleModalClose}
+        userId={editingUserId}
+        onSuccess={handleEditSuccess}
+      />
     </AppLayout>
   );
 }
