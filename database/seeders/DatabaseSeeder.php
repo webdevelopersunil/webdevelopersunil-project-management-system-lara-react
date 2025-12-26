@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\PortalSeeder;
 use Database\Seeders\RolePermissionSeeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\PortalRequestSeeder;
 
 
 class DatabaseSeeder extends Seeder
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             PortalSeeder::class,
+            PortalRequestSeeder::class,
         ]);
 
     }
