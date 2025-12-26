@@ -458,12 +458,12 @@ export default function UsersIndex() {
                         >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="text-gray-400 hover:text-primary dark:hover:text-primary">
+                        {/* <button className="text-gray-400 hover:text-primary dark:hover:text-primary">
                           <Eye className="h-4 w-4" />
-                        </button>
-                        <button className="text-gray-400 hover:text-red-500 dark:hover:text-red-400">
+                        </button> */}
+                        {/* <button className="text-gray-400 hover:text-red-500 dark:hover:text-red-400">
                           <MoreVertical className="h-4 w-4" />
-                        </button>
+                        </button> */}
                       </div>
                     </TableCell>
                   </TableRow>
