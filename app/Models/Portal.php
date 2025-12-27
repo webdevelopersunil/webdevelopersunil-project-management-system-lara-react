@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\PortalCollaborator;
 
 class Portal extends Model
 {
@@ -56,6 +57,11 @@ class Portal extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+    
+    public function collaborators()
+    {
+        return $this->hasMany(PortalCollaborator::class);
     }
     
     /**

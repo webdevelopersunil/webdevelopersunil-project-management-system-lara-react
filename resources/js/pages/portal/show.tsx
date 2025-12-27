@@ -5,6 +5,11 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
+type props = {
+  portal: any;
+  owner: any;
+}
+
 import { 
   Globe,
   Server,
@@ -264,7 +269,7 @@ const permissionColors = {
   test: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400'
 };
 
-export default function PortalShow() {
+export default function PortalShow( { portal, owner } : props ) {
   const [activeTab, setActiveTab] = useState('overview');
 
   const StatusBadge = ({ status }: { status: keyof typeof statusConfig }) => {
@@ -298,11 +303,11 @@ export default function PortalShow() {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    {portalData.name}
+                    {portal.name}
                   </h1>
                   <div className="mt-1 flex items-center gap-3">
-                    <StatusBadge status={portalData.status as keyof typeof statusConfig} />
-                    {portalData.active ? (
+                    <StatusBadge status={portal.status as keyof typeof statusConfig} />
+                    {portal.active ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
                         <CheckCircle className="h-3 w-3" /> Active
                       </span>
@@ -316,7 +321,7 @@ export default function PortalShow() {
               </div>
               
               <p className="max-w-2xl text-gray-600 dark:text-gray-400">
-                {portalData.description}
+                {portal.description}
               </p>
             </div>
             
@@ -406,10 +411,15 @@ export default function PortalShow() {
           </div>
         </div>
 
+
+
+
+        
+
         {/* Tabs Navigation */}
         <div className="border-b border-sidebar-border/70 dark:border-sidebar-border">
           <nav className="-mb-px flex space-x-8">
-            {['overview', 'configuration', 'collaborations', 'monitoring', 'settings'].map((tab) => (
+            {['overview', 'collaborations', 'settings'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -443,8 +453,8 @@ export default function PortalShow() {
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Domain</p>
                         <p className="mt-1 flex items-center gap-2 text-gray-900 dark:text-white">
                           <Link className="h-4 w-4" />
-                          <a href={`https://${portalData.domain}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
-                            {portalData.domain}
+                          <a href={`https://${portal.domain}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
+                            {portal.domain}
                           </a>
                         </p>
                       </div>
@@ -452,14 +462,14 @@ export default function PortalShow() {
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Full URL</p>
                         <p className="mt-1 flex items-center gap-2 text-gray-900 dark:text-white">
                           <ExternalLink className="h-4 w-4" />
-                          <a href={portalData.url} target="_blank" rel="noopener noreferrer" className="truncate hover:text-primary">
-                            {portalData.url}
+                          <a href={portal.url} target="_blank" rel="noopener noreferrer" className="truncate hover:text-primary">
+                            {portal.url}
                           </a>
                         </p>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">IP Address</p>
-                        <p className="mt-1 text-gray-900 dark:text-white">{portalData.ip_address}</p>
+                        <p className="mt-1 text-gray-900 dark:text-white">{portal.ip_address}</p>
                       </div>
                     </div>
                     <div className="space-y-3">
@@ -467,7 +477,7 @@ export default function PortalShow() {
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Created</p>
                         <p className="mt-1 flex items-center gap-2 text-gray-900 dark:text-white">
                           <Calendar className="h-4 w-4" />
-                          {new Date(portalData.created_at).toLocaleDateString('en-US', {
+                          {new Date(portal.created_at).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
@@ -478,7 +488,7 @@ export default function PortalShow() {
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Last Updated</p>
                         <p className="mt-1 flex items-center gap-2 text-gray-900 dark:text-white">
                           <Calendar className="h-4 w-4" />
-                          {new Date(portalData.updated_at).toLocaleDateString('en-US', {
+                          {new Date(portal.updated_at).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
@@ -488,7 +498,7 @@ export default function PortalShow() {
                       <div>
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Visibility</p>
                         <p className="mt-1 flex items-center gap-2">
-                          {portalData.is_public ? (
+                          {portal.is_public ? (
                             <>
                               <Globe className="h-4 w-4 text-green-500" />
                               <span className="text-green-600 dark:text-green-400">Public</span>
@@ -520,7 +530,7 @@ export default function PortalShow() {
                         <div>
                           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Framework</p>
                           <p className="text-gray-900 dark:text-white">
-                            {portalData.framework} v{portalData.framework_version}
+                            {portal.framework} v{portal.framework_version}
                           </p>
                         </div>
                       </div>
@@ -531,7 +541,7 @@ export default function PortalShow() {
                         <div>
                           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Database</p>
                           <p className="text-gray-900 dark:text-white">
-                            {portalData.database} v{portalData.database_version}
+                            {portal.database} v{portal.database_version}
                           </p>
                         </div>
                       </div>
@@ -543,7 +553,7 @@ export default function PortalShow() {
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Server Type</p>
-                          <p className="text-gray-900 dark:text-white">{portalData.machine_type}</p>
+                          <p className="text-gray-900 dark:text-white">{portal.machine_type}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
@@ -552,7 +562,7 @@ export default function PortalShow() {
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Virtual Machine</p>
-                          <p className="text-gray-900 dark:text-white">{portalData.vm_name}</p>
+                          <p className="text-gray-900 dark:text-white">{portal.vm_name}</p>
                         </div>
                       </div>
                     </div>
@@ -561,100 +571,6 @@ export default function PortalShow() {
               </>
             )}
 
-            {/* Configuration Tab */}
-{activeTab === 'configuration' && (
-  <div className="space-y-6">
-    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
-        <Server className="h-5 w-5" />
-        Server Configuration
-      </h2>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">CPU Cores</span>
-            <span className="font-medium">{configurationData.server.cpu_cores} cores</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Memory</span>
-            <span className="font-medium">{configurationData.server.memory_gb} GB</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">PHP Version</span>
-            <span className="font-medium">{configurationData.server.php_version}</span>
-          </div>
-        </div>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Redis</span>
-            {configurationData.server.redis_enabled ? (
-              <CheckCircle className="h-5 w-5 text-green-500" />
-            ) : (
-              <XCircle className="h-5 w-5 text-red-500" />
-            )}
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Load Balancer</span>
-            <span className="font-medium">{configurationData.server.load_balancer}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">OS Version</span>
-            <span className="font-medium">{configurationData.server.os_version}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
-        <Network className="h-5 w-5" />
-        Network & Security
-      </h2>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Firewall</span>
-            <span className="font-medium">{configurationData.network.firewall}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">SSL Certificate</span>
-            <span className="font-medium">{configurationData.network.ssl_cert}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">DDoS Protection</span>
-            {configurationData.network.ddos_protection ? (
-              <CheckCircle className="h-5 w-5 text-green-500" />
-            ) : (
-              <XCircle className="h-5 w-5 text-red-500" />
-            )}
-          </div>
-        </div>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Two-Factor Auth</span>
-            {configurationData.security.two_factor_auth ? (
-              <CheckCircle className="h-5 w-5 text-green-500" />
-            ) : (
-              <XCircle className="h-5 w-5 text-red-500" />
-            )}
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Session Timeout</span>
-            <span className="font-medium">{configurationData.security.session_timeout}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Audit Logging</span>
-            {configurationData.security.audit_logging ? (
-              <CheckCircle className="h-5 w-5 text-green-500" />
-            ) : (
-              <XCircle className="h-5 w-5 text-red-500" />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
 
             {activeTab === 'collaborations' && (
               <div className="rounded-xl border border-sidebar-border/70 bg-card dark:border-sidebar-border">
@@ -747,170 +663,91 @@ export default function PortalShow() {
             )}
 
 
+            {/* Settings Tab */}
+            {activeTab === 'settings' && (
+              <div className="space-y-6">
+                <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                  <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
+                    <Settings className="h-5 w-5" />
+                    General Settings
+                  </h2>
+                  <div className="space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Portal Name</label>
+                        <input
+                          type="text"
+                          defaultValue={settingsData.general.portal_name}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Timezone</label>
+                        <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800">
+                          <option>UTC</option>
+                          <option>America/New_York</option>
+                          <option>Europe/London</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Contact Email</label>
+                      <input
+                        type="email"
+                        defaultValue={settingsData.general.contact_email}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
+                      />
+                    </div>
+                  </div>
+                </div>
 
+                <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                  <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
+                    <Bell className="h-5 w-5" />
+                    Notifications
+                  </h2>
+                  <div className="space-y-3">
+                    <label className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Email Alerts</span>
+                      <input
+                        type="checkbox"
+                        defaultChecked={settingsData.notifications.email_alerts}
+                        className="h-4 w-4 rounded border-gray-300"
+                      />
+                    </label>
+                    <label className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Slack Alerts</span>
+                      <input
+                        type="checkbox"
+                        defaultChecked={settingsData.notifications.slack_alerts}
+                        className="h-4 w-4 rounded border-gray-300"
+                      />
+                    </label>
+                    <label className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">System Down Alerts</span>
+                      <input
+                        type="checkbox"
+                        defaultChecked={settingsData.notifications.alert_types.system_down}
+                        className="h-4 w-4 rounded border-gray-300"
+                      />
+                    </label>
+                  </div>
+                </div>
 
-{/* Monitoring Tab */}
-{activeTab === 'monitoring' && (
-  <div className="space-y-6">
-    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
-        <Activity className="h-5 w-5" />
-        System Metrics
-      </h2>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-4">
-          <div>
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-400">CPU Usage</span>
-              <span className="font-medium">{monitoringData.metrics.cpu_usage}%</span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-              <div 
-                className="h-full rounded-full bg-blue-500"
-                style={{ width: `${monitoringData.metrics.cpu_usage}%` }}
-              />
-            </div>
-          </div>
-          <div>
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Memory Usage</span>
-              <span className="font-medium">{monitoringData.metrics.memory_usage}%</span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-              <div 
-                className="h-full rounded-full bg-green-500"
-                style={{ width: `${monitoringData.metrics.memory_usage}%` }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Network In</span>
-            <span className="font-medium">{monitoringData.metrics.network_in}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Request Rate</span>
-            <span className="font-medium">{monitoringData.metrics.request_rate}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Error Rate</span>
-            <span className="font-medium">{monitoringData.metrics.error_rate}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
-        <Bell className="h-5 w-5" />
-        Recent Alerts
-      </h2>
-      <div className="space-y-3">
-        {monitoringData.alerts.map((alert) => (
-          <div key={alert.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
-            <div className="flex items-center gap-3">
-              {alert.type === 'warning' && <AlertCircle className="h-5 w-5 text-amber-500" />}
-              {alert.type === 'info' && <CheckCircle className="h-5 w-5 text-blue-500" />}
-              <div>
-                <p className="font-medium text-gray-900 dark:text-white">{alert.message}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{alert.time}</p>
+                <div className="flex items-center justify-end gap-3">
+                  <button className="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50 dark:border-gray-700">
+                    Cancel
+                  </button>
+                  <button className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary/90">
+                    Save Changes
+                  </button>
+                </div>
               </div>
-            </div>
-            <button className="text-sm text-primary hover:underline">View</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-)}
-
-{/* Settings Tab */}
-{activeTab === 'settings' && (
-  <div className="space-y-6">
-    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
-        <Settings className="h-5 w-5" />
-        General Settings
-      </h2>
-      <div className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Portal Name</label>
-            <input
-              type="text"
-              defaultValue={settingsData.general.portal_name}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Timezone</label>
-            <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800">
-              <option>UTC</option>
-              <option>America/New_York</option>
-              <option>Europe/London</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Contact Email</label>
-          <input
-            type="email"
-            defaultValue={settingsData.general.contact_email}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
-        <Bell className="h-5 w-5" />
-        Notifications
-      </h2>
-      <div className="space-y-3">
-        <label className="flex items-center justify-between">
-          <span className="text-sm text-gray-700 dark:text-gray-300">Email Alerts</span>
-          <input
-            type="checkbox"
-            defaultChecked={settingsData.notifications.email_alerts}
-            className="h-4 w-4 rounded border-gray-300"
-          />
-        </label>
-        <label className="flex items-center justify-between">
-          <span className="text-sm text-gray-700 dark:text-gray-300">Slack Alerts</span>
-          <input
-            type="checkbox"
-            defaultChecked={settingsData.notifications.slack_alerts}
-            className="h-4 w-4 rounded border-gray-300"
-          />
-        </label>
-        <label className="flex items-center justify-between">
-          <span className="text-sm text-gray-700 dark:text-gray-300">System Down Alerts</span>
-          <input
-            type="checkbox"
-            defaultChecked={settingsData.notifications.alert_types.system_down}
-            className="h-4 w-4 rounded border-gray-300"
-          />
-        </label>
-      </div>
-    </div>
-
-    <div className="flex items-center justify-end gap-3">
-      <button className="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50 dark:border-gray-700">
-        Cancel
-      </button>
-      <button className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary/90">
-        Save Changes
-      </button>
-    </div>
-  </div>
-)}
-
-
-
+            )}
 
           </div>
+
+
 
           {/* Right Column - Sidebar Cards */}
           <div className="space-y-6">
@@ -926,14 +763,8 @@ export default function PortalShow() {
                     <User className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900 dark:text-white">{portalData.owner.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{portalData.owner.role}</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-gray-400">{portalData.owner.email}</span>
+                    <h3 className="font-medium text-gray-900 dark:text-white">{owner.name} ({owner?.email})</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Add Role name here</p>
                   </div>
                 </div>
                 <button className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
@@ -955,7 +786,7 @@ export default function PortalShow() {
                     <Server className="h-4 w-4 text-gray-400" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">Server Backup</span>
                   </div>
-                  {portalData.server_backup ? (
+                  {portal.server_backup ? (
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   ) : (
                     <XCircle className="h-5 w-5 text-red-500" />
@@ -966,7 +797,7 @@ export default function PortalShow() {
                     <Database className="h-4 w-4 text-gray-400" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">Database Backup</span>
                   </div>
-                  {portalData.db_backup ? (
+                  {portal.db_backup ? (
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   ) : (
                     <XCircle className="h-5 w-5 text-red-500" />
@@ -975,13 +806,14 @@ export default function PortalShow() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Upload className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Migration Ready</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Migrated To New Server {portal.migrate_to_new_server}</span>
                   </div>
-                  {portalData.migrate_to_new_server ? (
+                  {portal.migrate_to_new_server == true ? (
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   ) : (
                     <span className="text-xs text-gray-500">Not Required</span>
                   )}
+
                 </div>
               </div>
               <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
@@ -991,7 +823,7 @@ export default function PortalShow() {
             </div>
 
             {/* Quick Actions Card */}
-            <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+            {/* <div className="rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
               <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
                 <Zap className="h-5 w-5" />
                 Quick Actions
@@ -1023,7 +855,9 @@ export default function PortalShow() {
                   </span>
                 </button>
               </div>
-            </div>
+            </div> */}
+
+
           </div>
         </div>
       </div>

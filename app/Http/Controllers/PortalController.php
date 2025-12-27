@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Portal;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\PortalCollaborator;
 
 class PortalController extends Controller
 {
@@ -108,10 +109,14 @@ class PortalController extends Controller
      */
     public function show(Portal $portal)
     {
-        $portals    =   Portal::findOrFail($portal->id);
-        
+        $portal     =   Portal::with('owner')->findOrFail($portal->id);
+        $owner      =   $portal->owner;
+        $collaborators =   PortalCollaborator::with('user')->where('portal_id', $portal->id)->get();
+
+        // dd($collaborators);
         return Inertia::render('portal/show', [
-            'portals' => $portals,
+            'portal'    =>  $portal,
+            'owner'     =>  $owner,
         ]);
     }
 
