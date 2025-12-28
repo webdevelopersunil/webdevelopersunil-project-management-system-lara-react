@@ -6,8 +6,6 @@ use Laravel\Fortify\Features;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 
-
-
 Route::get('/', function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
@@ -33,23 +31,10 @@ Route::middleware(['auth'])->group(function () {
 Route::get('users', [ UserController::class, 'index' ] )->name('users.index');
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Fallback route - redirects unknown routes to "/"
+Route::fallback(function () {
+    return redirect('/');
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/portals.php';
