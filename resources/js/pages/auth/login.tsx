@@ -279,26 +279,7 @@ export default function Login({
                                                 )}
                                             </Button>
 
-                                            {/* Quick Login Indicators */}
-                                            <div className="pt-4 border-t border-gray-200">
-                                                <p className="text-xs text-gray-500 text-center mb-3">
-                                                    Quick Login Status
-                                                </p>
-                                                <div className="flex justify-center gap-6">
-                                                    <div className="text-center">
-                                                        <div className="size-3 rounded-full bg-emerald-500 mx-auto mb-1"></div>
-                                                        <span className="text-xs text-gray-600">Available</span>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <div className="size-3 rounded-full bg-green-500 mx-auto mb-1"></div>
-                                                        <span className="text-xs text-gray-600">Connected</span>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <div className="size-3 rounded-full bg-blue-500 mx-auto mb-1"></div>
-                                                        <span className="text-xs text-gray-600">Secure</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
 
                                         {canRegister && (
@@ -350,7 +331,7 @@ export default function Login({
                 </div>
             </div>
 
-            {/* Bottom Banner */}
+            {/* Bottom Banner
             <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-900 to-emerald-900 text-white py-2 px-6 text-sm hidden lg:block">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
@@ -364,7 +345,7 @@ export default function Login({
                         <span>Emergency: +91-XXX-XXXX-XXXX</span>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }
