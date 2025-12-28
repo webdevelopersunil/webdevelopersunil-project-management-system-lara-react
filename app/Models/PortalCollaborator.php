@@ -95,4 +95,15 @@ class PortalCollaborator extends Model
         
         return now()->greaterThan($this->end_date);
     }
+
+    /**
+     * Get the list of users for a given portal ID.
+     *
+     * @param int $portalId
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getUsersByPortalId(int $portalId)
+    {
+        return static::where('portal_id', $portalId)->with('user')->get()->pluck('user');
+    }
 }

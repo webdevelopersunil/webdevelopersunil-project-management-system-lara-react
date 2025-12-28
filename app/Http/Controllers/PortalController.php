@@ -111,12 +111,12 @@ class PortalController extends Controller
     {
         $portal     =   Portal::with('owner')->findOrFail($portal->id);
         $owner      =   $portal->owner;
-        $collaborators =   PortalCollaborator::with('user')->where('portal_id', $portal->id)->get();
-
-        // dd($collaborators);
+        $collaborators =   PortalCollaborator::getUsersByPortalId($portal->id);
+        
         return Inertia::render('portal/show', [
             'portal'    =>  $portal,
             'owner'     =>  $owner,
+            'collaborators'=> $collaborators
         ]);
     }
 
