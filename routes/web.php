@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
+
 
 
 Route::get('/', function () {
@@ -13,9 +15,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard',[DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard/2',[DashboardController::class, 'index2'])->name('dashboard-2');
+    Route::get('dashboard/3',[DashboardController::class, 'index3'])->name('dashboard-3');
 });
 
 
