@@ -183,7 +183,7 @@ export default function Login({
                                                 <div className="relative">
                                                     <Input
                                                         id="email"
-                                                        type="email"
+                                                        type="text"
                                                         name="email"
                                                         required
                                                         autoFocus
