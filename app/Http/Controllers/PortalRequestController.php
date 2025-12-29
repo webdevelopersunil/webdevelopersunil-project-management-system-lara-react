@@ -41,7 +41,7 @@ class PortalRequestController extends Controller
         }
         
         // Get paginated results
-        $perPage = $request->get('per_page', 15);
+        $perPage = $request->get('per_page', 10);
         $portals = $query->latest()->paginate($perPage)->withQueryString();
         
         return Inertia::render('portal/request/index', [

@@ -3,46 +3,13 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage, router } from '@inertiajs/react';
-import ConfirmDelete from "@/components/confirm-delete";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { 
-    Search, 
-    Plus, 
-    MoreVertical, 
-    Edit, 
-    Eye, 
-    Info,
-    ChevronLeft,
-    ChevronRight,
-    ChevronsLeft,
-    ChevronsRight
-} from 'lucide-react';
+import {  Search, Plus, Info, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -62,28 +29,19 @@ export interface Portal {
   name: string;
   description: string | null;
   owner_id: number | null;
-
   url: string;
   domain: string | null;
-
   active: boolean;
-
   ip_address: string | null;
-
   status: 'completed' | 'pending' | 'in-progress';
-
   server_backup: boolean;
   db_backup: boolean;
   migrate_to_new_server: boolean;
-
   vm_name: string | null;
-
   framework: string | null;
   framework_version: number | null;
-
   database: string | null;
   database_version: number | null;
-
   is_public: boolean;
 
   machine_type:
@@ -97,11 +55,9 @@ export interface Portal {
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;
-
   user_count: number;
-document_count: number;
+  document_count: number;
 }
-
 
 interface PaginationLink {
     url: string | null;
@@ -139,42 +95,6 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
     const [search, setSearch]   = useState(filters.search || '');
     const [status, setStatus]   = useState(filters.status || '');
     const [debouncedSearch, setDebouncedSearch] = useState(search);
-
-
-
-
-    const { flash } = usePage().props as { flash?: { success?: string; error?: string } };
-    const [showMessage, setShowMessage] = useState(false);
-    const [message, setMessage] = useState('');
-    const [messageType, setMessageType] = useState<'success' | 'error'>('success');
-
-    useEffect(() => {
-        if (flash?.success) {
-            setMessage(flash.success);
-            setMessageType('success');
-            setShowMessage(true);
-            
-            // Auto-hide after 5 seconds
-            const timer = setTimeout(() => {
-                setShowMessage(false);
-            }, 5000);
-            
-            return () => clearTimeout(timer);
-        }
-        
-        if (flash?.error) {
-            setMessage(flash.error);
-            setMessageType('error');
-            setShowMessage(true);
-            
-            const timer = setTimeout(() => {
-                setShowMessage(false);
-            }, 5000);
-            
-            return () => clearTimeout(timer);
-        }
-    }, [flash]);
-
 
 
     // Debounce search input
