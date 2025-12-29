@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\PortalRequestController::documents
-* @see app/Http/Controllers/PortalRequestController.php:449
+* @see app/Http/Controllers/PortalRequestController.php:481
 * @route '/portal-requests/api/{uuid}/documents'
 */
 export const documents = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ documents.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::documents
-* @see app/Http/Controllers/PortalRequestController.php:449
+* @see app/Http/Controllers/PortalRequestController.php:481
 * @route '/portal-requests/api/{uuid}/documents'
 */
 documents.url = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ documents.url = (args: { uuid: string | number } | [uuid: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::documents
-* @see app/Http/Controllers/PortalRequestController.php:449
+* @see app/Http/Controllers/PortalRequestController.php:481
 * @route '/portal-requests/api/{uuid}/documents'
 */
 documents.get = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ documents.get = (args: { uuid: string | number } | [uuid: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::documents
-* @see app/Http/Controllers/PortalRequestController.php:449
+* @see app/Http/Controllers/PortalRequestController.php:481
 * @route '/portal-requests/api/{uuid}/documents'
 */
 documents.head = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ documents.head = (args: { uuid: string | number } | [uuid: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::documents
-* @see app/Http/Controllers/PortalRequestController.php:449
+* @see app/Http/Controllers/PortalRequestController.php:481
 * @route '/portal-requests/api/{uuid}/documents'
 */
 const documentsForm = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ const documentsForm = (args: { uuid: string | number } | [uuid: string | number 
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::documents
-* @see app/Http/Controllers/PortalRequestController.php:449
+* @see app/Http/Controllers/PortalRequestController.php:481
 * @route '/portal-requests/api/{uuid}/documents'
 */
 documentsForm.get = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -83,7 +83,7 @@ documentsForm.get = (args: { uuid: string | number } | [uuid: string | number ] 
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::documents
-* @see app/Http/Controllers/PortalRequestController.php:449
+* @see app/Http/Controllers/PortalRequestController.php:481
 * @route '/portal-requests/api/{uuid}/documents'
 */
 documentsForm.head = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -100,7 +100,7 @@ documents.form = documentsForm
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::addDocument
-* @see app/Http/Controllers/PortalRequestController.php:500
+* @see app/Http/Controllers/PortalRequestController.php:532
 * @route '/portal-requests/api/{uuid}/documents'
 */
 export const addDocument = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ addDocument.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::addDocument
-* @see app/Http/Controllers/PortalRequestController.php:500
+* @see app/Http/Controllers/PortalRequestController.php:532
 * @route '/portal-requests/api/{uuid}/documents'
 */
 addDocument.url = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -142,7 +142,7 @@ addDocument.url = (args: { uuid: string | number } | [uuid: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::addDocument
-* @see app/Http/Controllers/PortalRequestController.php:500
+* @see app/Http/Controllers/PortalRequestController.php:532
 * @route '/portal-requests/api/{uuid}/documents'
 */
 addDocument.post = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -152,7 +152,7 @@ addDocument.post = (args: { uuid: string | number } | [uuid: string | number ] |
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::addDocument
-* @see app/Http/Controllers/PortalRequestController.php:500
+* @see app/Http/Controllers/PortalRequestController.php:532
 * @route '/portal-requests/api/{uuid}/documents'
 */
 const addDocumentForm = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -162,7 +162,7 @@ const addDocumentForm = (args: { uuid: string | number } | [uuid: string | numbe
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::addDocument
-* @see app/Http/Controllers/PortalRequestController.php:500
+* @see app/Http/Controllers/PortalRequestController.php:532
 * @route '/portal-requests/api/{uuid}/documents'
 */
 addDocumentForm.post = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -174,7 +174,7 @@ addDocument.form = addDocumentForm
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::deleteDocument
-* @see app/Http/Controllers/PortalRequestController.php:562
+* @see app/Http/Controllers/PortalRequestController.php:594
 * @route '/portal-requests/api/{uuid}/documents/{documentId}'
 */
 export const deleteDocument = (args: { uuid: string | number, documentId: string | number } | [uuid: string | number, documentId: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -189,7 +189,7 @@ deleteDocument.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::deleteDocument
-* @see app/Http/Controllers/PortalRequestController.php:562
+* @see app/Http/Controllers/PortalRequestController.php:594
 * @route '/portal-requests/api/{uuid}/documents/{documentId}'
 */
 deleteDocument.url = (args: { uuid: string | number, documentId: string | number } | [uuid: string | number, documentId: string | number ], options?: RouteQueryOptions) => {
@@ -215,7 +215,7 @@ deleteDocument.url = (args: { uuid: string | number, documentId: string | number
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::deleteDocument
-* @see app/Http/Controllers/PortalRequestController.php:562
+* @see app/Http/Controllers/PortalRequestController.php:594
 * @route '/portal-requests/api/{uuid}/documents/{documentId}'
 */
 deleteDocument.delete = (args: { uuid: string | number, documentId: string | number } | [uuid: string | number, documentId: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -225,7 +225,7 @@ deleteDocument.delete = (args: { uuid: string | number, documentId: string | num
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::deleteDocument
-* @see app/Http/Controllers/PortalRequestController.php:562
+* @see app/Http/Controllers/PortalRequestController.php:594
 * @route '/portal-requests/api/{uuid}/documents/{documentId}'
 */
 const deleteDocumentForm = (args: { uuid: string | number, documentId: string | number } | [uuid: string | number, documentId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -240,7 +240,7 @@ const deleteDocumentForm = (args: { uuid: string | number, documentId: string | 
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::deleteDocument
-* @see app/Http/Controllers/PortalRequestController.php:562
+* @see app/Http/Controllers/PortalRequestController.php:594
 * @route '/portal-requests/api/{uuid}/documents/{documentId}'
 */
 deleteDocumentForm.delete = (args: { uuid: string | number, documentId: string | number } | [uuid: string | number, documentId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -257,7 +257,7 @@ deleteDocument.form = deleteDocumentForm
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::statistics
-* @see app/Http/Controllers/PortalRequestController.php:625
+* @see app/Http/Controllers/PortalRequestController.php:657
 * @route '/portal-requests/api/statistics'
 */
 export const statistics = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -272,7 +272,7 @@ statistics.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::statistics
-* @see app/Http/Controllers/PortalRequestController.php:625
+* @see app/Http/Controllers/PortalRequestController.php:657
 * @route '/portal-requests/api/statistics'
 */
 statistics.url = (options?: RouteQueryOptions) => {
@@ -281,7 +281,7 @@ statistics.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::statistics
-* @see app/Http/Controllers/PortalRequestController.php:625
+* @see app/Http/Controllers/PortalRequestController.php:657
 * @route '/portal-requests/api/statistics'
 */
 statistics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -291,7 +291,7 @@ statistics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::statistics
-* @see app/Http/Controllers/PortalRequestController.php:625
+* @see app/Http/Controllers/PortalRequestController.php:657
 * @route '/portal-requests/api/statistics'
 */
 statistics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -301,7 +301,7 @@ statistics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::statistics
-* @see app/Http/Controllers/PortalRequestController.php:625
+* @see app/Http/Controllers/PortalRequestController.php:657
 * @route '/portal-requests/api/statistics'
 */
 const statisticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -311,7 +311,7 @@ const statisticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::statistics
-* @see app/Http/Controllers/PortalRequestController.php:625
+* @see app/Http/Controllers/PortalRequestController.php:657
 * @route '/portal-requests/api/statistics'
 */
 statisticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -321,7 +321,7 @@ statisticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::statistics
-* @see app/Http/Controllers/PortalRequestController.php:625
+* @see app/Http/Controllers/PortalRequestController.php:657
 * @route '/portal-requests/api/statistics'
 */
 statisticsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

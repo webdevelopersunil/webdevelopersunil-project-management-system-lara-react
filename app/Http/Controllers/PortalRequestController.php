@@ -23,69 +23,38 @@ class PortalRequestController extends Controller
      * @param Request $request
      * @return \Inertia\Response|\Illuminate\View\View
      */
-    public function index(Request $request)
-    {
-        // Start building the query
-        $query = PortalRequest::with(['portal', 'submitter', 'reviewer', 'documents']);
+    public function index(Request $request){
         
-        // Apply filters if provided
-        if ($request->has('portal_id')) {
-            $query->where('portal_id', $request->portal_id);
-        }
+        $query = Portal::where('owner_id', $request->user()->id);
         
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-        
-        if ($request->has('priority')) {
-            $query->where('priority', $request->priority);
-        }
-        
-        if ($request->has('submitted_by')) {
-            $query->where('submitted_by', $request->submitted_by);
-        }
-        
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('comments', 'like', "%{$search}%")
-                  ->orWhere('reason', 'like', "%{$search}%")
-                  ->orWhere('request_uuid', 'like', "%{$search}%")
-                  ->orWhereHas('submitter', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('portal', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  });
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
             });
         }
         
-        // Apply sorting
-        $sortField = $request->get('sort_by', 'created_at');
-        $sortDirection = $request->get('sort_direction', 'desc');
-        $query->orderBy($sortField, $sortDirection);
+        // Apply status filter
+        if ($request->has('status') && !empty($request->status) && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
         
-        // Paginate results
+        // Get paginated results
         $perPage = $request->get('per_page', 15);
-        $portalRequests = $query->paginate($perPage);
+        $portals = $query->latest()->paginate($perPage)->withQueryString();
         
-        // Get additional data for filters
-        $portals = Portal::select('id', 'name')->get();
-        $statuses = ['Pending', 'Under Review', 'Approved', 'Rejected', 'Cancelled', 'Completed'];
-        $priorities = ['Low', 'Medium', 'High'];
-        
-        // If using Inertia.js
-        // if (class_exists(Inertia::class)) {
-            return Inertia::render('portal/request/index', [
-                'portalRequests' => $portalRequests,
-                'filters' => $request->only(['search', 'portal_id', 'status', 'priority', 'per_page', 'sort_by', 'sort_direction']),
-                'portals' => $portals,
-                'statuses' => $statuses,
-                'priorities' => $priorities,
-            ]);
-        // }
-        
+        return Inertia::render('portal/request/index', [
+            'portals' => $portals->items(),
+            'total' => $portals->total(),
+            'current_page' => $portals->currentPage(),
+            'last_page' => $portals->lastPage(),
+            'per_page' => $portals->perPage(),
+            'from' => $portals->firstItem(),
+            'to' => $portals->lastItem(),
+            'filters' => $request->only(['search', 'status']),
+            'links' => $portals->linkCollection()->toArray(),
+        ]);
     }
 
     /**
@@ -180,7 +149,70 @@ class PortalRequestController extends Controller
      * @param  string  $uuid
      * @return \Inertia\Response|\Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
-    public function show($uuid)
+    public function show(Request $request)
+    {
+        // Start building the query
+        $query = PortalRequest::with(['portal', 'submitter', 'reviewer', 'documents']);
+        
+        // Apply filters if provided
+        if ($request->has('portal_id')) {
+            $query->where('portal_id', $request->portal_id);
+        }
+        
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->has('priority')) {
+            $query->where('priority', $request->priority);
+        }
+        
+        if ($request->has('submitted_by')) {
+            $query->where('submitted_by', $request->submitted_by);
+        }
+        
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('comments', 'like', "%{$search}%")
+                  ->orWhere('reason', 'like', "%{$search}%")
+                  ->orWhere('request_uuid', 'like', "%{$search}%")
+                  ->orWhereHas('submitter', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('portal', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Apply sorting
+        $sortField = $request->get('sort_by', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+        $query->orderBy($sortField, $sortDirection);
+        
+        // Paginate results
+        $perPage = $request->get('per_page', 15);
+        $portalRequests = $query->paginate($perPage);
+        
+        // Get additional data for filters
+        $portals = Portal::select('id', 'name')->get();
+        $statuses = ['Pending', 'Under Review', 'Approved', 'Rejected', 'Cancelled', 'Completed'];
+        $priorities = ['Low', 'Medium', 'High'];
+        
+        return Inertia::render('portal/request/show', [
+            'portalRequests' => $portalRequests,
+            'filters' => $request->only(['search', 'portal_id', 'status', 'priority', 'per_page', 'sort_by', 'sort_direction']),
+            'portals' => $portals,
+            'statuses' => $statuses,
+            'priorities' => $priorities,
+        ]);
+    }
+
+
+
+    public function show_old($uuid)
     {
         $portalRequest = PortalRequest::with([
             'portal',

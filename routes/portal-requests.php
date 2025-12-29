@@ -6,9 +6,13 @@ use Illuminate\Support\Facades\Route;
 // Portal Requests Routes
 Route::middleware(['auth'])->group(function () {
     Route::prefix('portal-requests')->name('portal-requests.')->group(function () {
+
         // Index page
         Route::get('/', [PortalRequestController::class, 'index'])->name('index');
-        
+
+        // List of requests
+        Route::get('/{uuid}', [PortalRequestController::class, 'show'])->name('show');
+
         // Create page
         Route::get('/create', [PortalRequestController::class, 'create'])->name('create');
         
@@ -16,7 +20,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/', [PortalRequestController::class, 'store'])->name('store');
         
         // Show single request
-        Route::get('/{uuid}', [PortalRequestController::class, 'show'])->name('show');
+        // Route::get('/{uuid}', [PortalRequestController::class, 'show']);
         
         // Edit page
         Route::get('/{uuid}/edit', [PortalRequestController::class, 'edit'])->name('edit');

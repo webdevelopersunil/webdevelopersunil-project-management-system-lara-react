@@ -82,145 +82,8 @@ indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 index.form = indexForm
 
 /**
-* @see \App\Http\Controllers\PortalRequestController::create
-* @see app/Http/Controllers/PortalRequestController.php:96
-* @route '/portal-requests/create'
-*/
-export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
-    method: 'get',
-})
-
-create.definition = {
-    methods: ["get","head"],
-    url: '/portal-requests/create',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::create
-* @see app/Http/Controllers/PortalRequestController.php:96
-* @route '/portal-requests/create'
-*/
-create.url = (options?: RouteQueryOptions) => {
-    return create.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::create
-* @see app/Http/Controllers/PortalRequestController.php:96
-* @route '/portal-requests/create'
-*/
-create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::create
-* @see app/Http/Controllers/PortalRequestController.php:96
-* @route '/portal-requests/create'
-*/
-create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: create.url(options),
-    method: 'head',
-})
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::create
-* @see app/Http/Controllers/PortalRequestController.php:96
-* @route '/portal-requests/create'
-*/
-const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::create
-* @see app/Http/Controllers/PortalRequestController.php:96
-* @route '/portal-requests/create'
-*/
-createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::create
-* @see app/Http/Controllers/PortalRequestController.php:96
-* @route '/portal-requests/create'
-*/
-createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-create.form = createForm
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::store
-* @see app/Http/Controllers/PortalRequestController.php:119
-* @route '/portal-requests'
-*/
-export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
-    method: 'post',
-})
-
-store.definition = {
-    methods: ["post"],
-    url: '/portal-requests',
-} satisfies RouteDefinition<["post"]>
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::store
-* @see app/Http/Controllers/PortalRequestController.php:119
-* @route '/portal-requests'
-*/
-store.url = (options?: RouteQueryOptions) => {
-    return store.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::store
-* @see app/Http/Controllers/PortalRequestController.php:119
-* @route '/portal-requests'
-*/
-store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::store
-* @see app/Http/Controllers/PortalRequestController.php:119
-* @route '/portal-requests'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\PortalRequestController::store
-* @see app/Http/Controllers/PortalRequestController.php:119
-* @route '/portal-requests'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
-
-/**
 * @see \App\Http\Controllers\PortalRequestController::show
-* @see app/Http/Controllers/PortalRequestController.php:183
+* @see app/Http/Controllers/PortalRequestController.php:152
 * @route '/portal-requests/{uuid}'
 */
 export const show = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -235,7 +98,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::show
-* @see app/Http/Controllers/PortalRequestController.php:183
+* @see app/Http/Controllers/PortalRequestController.php:152
 * @route '/portal-requests/{uuid}'
 */
 show.url = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -262,7 +125,7 @@ show.url = (args: { uuid: string | number } | [uuid: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::show
-* @see app/Http/Controllers/PortalRequestController.php:183
+* @see app/Http/Controllers/PortalRequestController.php:152
 * @route '/portal-requests/{uuid}'
 */
 show.get = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -272,7 +135,7 @@ show.get = (args: { uuid: string | number } | [uuid: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::show
-* @see app/Http/Controllers/PortalRequestController.php:183
+* @see app/Http/Controllers/PortalRequestController.php:152
 * @route '/portal-requests/{uuid}'
 */
 show.head = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -282,7 +145,7 @@ show.head = (args: { uuid: string | number } | [uuid: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::show
-* @see app/Http/Controllers/PortalRequestController.php:183
+* @see app/Http/Controllers/PortalRequestController.php:152
 * @route '/portal-requests/{uuid}'
 */
 const showForm = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -292,7 +155,7 @@ const showForm = (args: { uuid: string | number } | [uuid: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::show
-* @see app/Http/Controllers/PortalRequestController.php:183
+* @see app/Http/Controllers/PortalRequestController.php:152
 * @route '/portal-requests/{uuid}'
 */
 showForm.get = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -302,7 +165,7 @@ showForm.get = (args: { uuid: string | number } | [uuid: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::show
-* @see app/Http/Controllers/PortalRequestController.php:183
+* @see app/Http/Controllers/PortalRequestController.php:152
 * @route '/portal-requests/{uuid}'
 */
 showForm.head = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -318,8 +181,145 @@ showForm.head = (args: { uuid: string | number } | [uuid: string | number ] | st
 show.form = showForm
 
 /**
+* @see \App\Http\Controllers\PortalRequestController::create
+* @see app/Http/Controllers/PortalRequestController.php:65
+* @route '/portal-requests/create'
+*/
+export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: create.url(options),
+    method: 'get',
+})
+
+create.definition = {
+    methods: ["get","head"],
+    url: '/portal-requests/create',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::create
+* @see app/Http/Controllers/PortalRequestController.php:65
+* @route '/portal-requests/create'
+*/
+create.url = (options?: RouteQueryOptions) => {
+    return create.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::create
+* @see app/Http/Controllers/PortalRequestController.php:65
+* @route '/portal-requests/create'
+*/
+create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::create
+* @see app/Http/Controllers/PortalRequestController.php:65
+* @route '/portal-requests/create'
+*/
+create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: create.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::create
+* @see app/Http/Controllers/PortalRequestController.php:65
+* @route '/portal-requests/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::create
+* @see app/Http/Controllers/PortalRequestController.php:65
+* @route '/portal-requests/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::create
+* @see app/Http/Controllers/PortalRequestController.php:65
+* @route '/portal-requests/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::store
+* @see app/Http/Controllers/PortalRequestController.php:88
+* @route '/portal-requests'
+*/
+export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
+
+store.definition = {
+    methods: ["post"],
+    url: '/portal-requests',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::store
+* @see app/Http/Controllers/PortalRequestController.php:88
+* @route '/portal-requests'
+*/
+store.url = (options?: RouteQueryOptions) => {
+    return store.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::store
+* @see app/Http/Controllers/PortalRequestController.php:88
+* @route '/portal-requests'
+*/
+store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::store
+* @see app/Http/Controllers/PortalRequestController.php:88
+* @route '/portal-requests'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PortalRequestController::store
+* @see app/Http/Controllers/PortalRequestController.php:88
+* @route '/portal-requests'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
 * @see \App\Http\Controllers\PortalRequestController::edit
-* @see app/Http/Controllers/PortalRequestController.php:225
+* @see app/Http/Controllers/PortalRequestController.php:257
 * @route '/portal-requests/{uuid}/edit'
 */
 export const edit = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -334,7 +334,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::edit
-* @see app/Http/Controllers/PortalRequestController.php:225
+* @see app/Http/Controllers/PortalRequestController.php:257
 * @route '/portal-requests/{uuid}/edit'
 */
 edit.url = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -361,7 +361,7 @@ edit.url = (args: { uuid: string | number } | [uuid: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::edit
-* @see app/Http/Controllers/PortalRequestController.php:225
+* @see app/Http/Controllers/PortalRequestController.php:257
 * @route '/portal-requests/{uuid}/edit'
 */
 edit.get = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -371,7 +371,7 @@ edit.get = (args: { uuid: string | number } | [uuid: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::edit
-* @see app/Http/Controllers/PortalRequestController.php:225
+* @see app/Http/Controllers/PortalRequestController.php:257
 * @route '/portal-requests/{uuid}/edit'
 */
 edit.head = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -381,7 +381,7 @@ edit.head = (args: { uuid: string | number } | [uuid: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::edit
-* @see app/Http/Controllers/PortalRequestController.php:225
+* @see app/Http/Controllers/PortalRequestController.php:257
 * @route '/portal-requests/{uuid}/edit'
 */
 const editForm = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -391,7 +391,7 @@ const editForm = (args: { uuid: string | number } | [uuid: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::edit
-* @see app/Http/Controllers/PortalRequestController.php:225
+* @see app/Http/Controllers/PortalRequestController.php:257
 * @route '/portal-requests/{uuid}/edit'
 */
 editForm.get = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -401,7 +401,7 @@ editForm.get = (args: { uuid: string | number } | [uuid: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::edit
-* @see app/Http/Controllers/PortalRequestController.php:225
+* @see app/Http/Controllers/PortalRequestController.php:257
 * @route '/portal-requests/{uuid}/edit'
 */
 editForm.head = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -418,7 +418,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::update
-* @see app/Http/Controllers/PortalRequestController.php:279
+* @see app/Http/Controllers/PortalRequestController.php:311
 * @route '/portal-requests/{uuid}'
 */
 export const update = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -433,7 +433,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::update
-* @see app/Http/Controllers/PortalRequestController.php:279
+* @see app/Http/Controllers/PortalRequestController.php:311
 * @route '/portal-requests/{uuid}'
 */
 update.url = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -460,7 +460,7 @@ update.url = (args: { uuid: string | number } | [uuid: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::update
-* @see app/Http/Controllers/PortalRequestController.php:279
+* @see app/Http/Controllers/PortalRequestController.php:311
 * @route '/portal-requests/{uuid}'
 */
 update.put = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -470,7 +470,7 @@ update.put = (args: { uuid: string | number } | [uuid: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::update
-* @see app/Http/Controllers/PortalRequestController.php:279
+* @see app/Http/Controllers/PortalRequestController.php:311
 * @route '/portal-requests/{uuid}'
 */
 const updateForm = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -485,7 +485,7 @@ const updateForm = (args: { uuid: string | number } | [uuid: string | number ] |
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::update
-* @see app/Http/Controllers/PortalRequestController.php:279
+* @see app/Http/Controllers/PortalRequestController.php:311
 * @route '/portal-requests/{uuid}'
 */
 updateForm.put = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -502,7 +502,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::updateStatus
-* @see app/Http/Controllers/PortalRequestController.php:364
+* @see app/Http/Controllers/PortalRequestController.php:396
 * @route '/portal-requests/{uuid}/status'
 */
 export const updateStatus = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -517,7 +517,7 @@ updateStatus.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::updateStatus
-* @see app/Http/Controllers/PortalRequestController.php:364
+* @see app/Http/Controllers/PortalRequestController.php:396
 * @route '/portal-requests/{uuid}/status'
 */
 updateStatus.url = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -544,7 +544,7 @@ updateStatus.url = (args: { uuid: string | number } | [uuid: string | number ] |
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::updateStatus
-* @see app/Http/Controllers/PortalRequestController.php:364
+* @see app/Http/Controllers/PortalRequestController.php:396
 * @route '/portal-requests/{uuid}/status'
 */
 updateStatus.put = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -554,7 +554,7 @@ updateStatus.put = (args: { uuid: string | number } | [uuid: string | number ] |
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::updateStatus
-* @see app/Http/Controllers/PortalRequestController.php:364
+* @see app/Http/Controllers/PortalRequestController.php:396
 * @route '/portal-requests/{uuid}/status'
 */
 const updateStatusForm = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -569,7 +569,7 @@ const updateStatusForm = (args: { uuid: string | number } | [uuid: string | numb
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::updateStatus
-* @see app/Http/Controllers/PortalRequestController.php:364
+* @see app/Http/Controllers/PortalRequestController.php:396
 * @route '/portal-requests/{uuid}/status'
 */
 updateStatusForm.put = (args: { uuid: string | number } | [uuid: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -586,7 +586,7 @@ updateStatus.form = updateStatusForm
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::myRequests
-* @see app/Http/Controllers/PortalRequestController.php:692
+* @see app/Http/Controllers/PortalRequestController.php:724
 * @route '/portal-requests/my/requests'
 */
 export const myRequests = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -601,7 +601,7 @@ myRequests.definition = {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::myRequests
-* @see app/Http/Controllers/PortalRequestController.php:692
+* @see app/Http/Controllers/PortalRequestController.php:724
 * @route '/portal-requests/my/requests'
 */
 myRequests.url = (options?: RouteQueryOptions) => {
@@ -610,7 +610,7 @@ myRequests.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::myRequests
-* @see app/Http/Controllers/PortalRequestController.php:692
+* @see app/Http/Controllers/PortalRequestController.php:724
 * @route '/portal-requests/my/requests'
 */
 myRequests.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -620,7 +620,7 @@ myRequests.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::myRequests
-* @see app/Http/Controllers/PortalRequestController.php:692
+* @see app/Http/Controllers/PortalRequestController.php:724
 * @route '/portal-requests/my/requests'
 */
 myRequests.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -630,7 +630,7 @@ myRequests.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::myRequests
-* @see app/Http/Controllers/PortalRequestController.php:692
+* @see app/Http/Controllers/PortalRequestController.php:724
 * @route '/portal-requests/my/requests'
 */
 const myRequestsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -640,7 +640,7 @@ const myRequestsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::myRequests
-* @see app/Http/Controllers/PortalRequestController.php:692
+* @see app/Http/Controllers/PortalRequestController.php:724
 * @route '/portal-requests/my/requests'
 */
 myRequestsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -650,7 +650,7 @@ myRequestsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\PortalRequestController::myRequests
-* @see app/Http/Controllers/PortalRequestController.php:692
+* @see app/Http/Controllers/PortalRequestController.php:724
 * @route '/portal-requests/my/requests'
 */
 myRequestsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -667,9 +667,9 @@ myRequests.form = myRequestsForm
 
 const portalRequests = {
     index: Object.assign(index, index),
+    show: Object.assign(show, show),
     create: Object.assign(create, create),
     store: Object.assign(store, store),
-    show: Object.assign(show, show),
     edit: Object.assign(edit, edit),
     update: Object.assign(update, update),
     updateStatus: Object.assign(updateStatus, updateStatus),
