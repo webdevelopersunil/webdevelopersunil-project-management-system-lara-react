@@ -18,7 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Portals',
-        href: '/portals',
+        href: '/portal-requests',
     },
 ];
 

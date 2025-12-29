@@ -102,7 +102,7 @@ export default function PortalRequestsPage({
     },
     {
       title: portal.name,
-      href: `/portals/${portal.id}`,
+      href: `/portal-requests`,
     },
     {
       title: 'Requests',
