@@ -46,9 +46,15 @@ export default function Login({
                 {/* Left Panel - Branding & Info */}
                 <div className="hidden lg:flex lg:w-1/2 flex-col p-12 bg-gradient-to-b from-blue-900 to-emerald-900 text-white">
                     <div className="flex items-center gap-3 mb-12">
-                        <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm">
-                            <Building2 className="size-8" />
+                        <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm flex items-center justify-center">
+                            <span className="text-2xl font-extrabold tracking-wider drop-shadow">
+                                <span className="text-orange-400">O</span>
+                                <span className="text-emerald-400">N</span>
+                                <span className="text-sky-400">G</span>
+                                <span className="text-rose-400">C</span>
+                            </span>
                         </div>
+
                         <div>
                             <h1 className="text-2xl font-bold">ONGC</h1>
                             <p className="text-blue-200 text-sm">Oil and Natural Gas Corporation</p>
@@ -59,10 +65,10 @@ export default function Login({
                         <div className="max-w-md">
                             <div className="mb-10">
                                 <h2 className="text-4xl font-bold mb-4">
-                                    Request Management <span className="text-emerald-300">System</span>
+                                    Changes Request Management <span className="text-emerald-300">System</span>
                                 </h2>
                                 <p className="text-blue-200 text-lg">
-                                    Streamline your portal requests, project approvals, and resource management
+                                    Streamline your portal <span className="text-emerald-300">changes</span> requests, project approvals, and resource management
                                 </p>
                             </div>
 
@@ -102,7 +108,7 @@ export default function Login({
                                 <div className="flex items-center justify-between">
                                     <div className="text-sm text-blue-200">
                                         <span className="text-white font-medium">Need Help?</span>
-                                        <p>Contact IT Support at ext. 4500</p>
+                                        <p>Contact IT Support at ext. 6121</p>
                                     </div>
                                     <div className="text-sm text-blue-200">
                                         <span className="text-white font-medium">Security Level</span>

@@ -167,17 +167,11 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                 <div className="mb-8">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">Portals</h1>
+                            <h1 className="text-3xl font-bold tracking-tight">Assigned Portals</h1>
                             <p className="text-muted-foreground mt-2">
-                                Manage all your portals and their settings
+                                Manage your portals and their changes requests
                             </p>
                         </div>
-                        <Link href="/portals/create">
-                            <Button className="gap-2">
-                                <Plus className="h-4 w-4" />
-                                Create New Portal
-                            </Button>
-                        </Link>
                     </div>
                 </div>
 
