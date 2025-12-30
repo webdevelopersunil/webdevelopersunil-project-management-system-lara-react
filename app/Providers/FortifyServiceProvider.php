@@ -4,19 +4,14 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
-use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
-use LdapRecord\Container;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -33,86 +28,9 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->configureAuthentication(); // 🔥 LDAP integration
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
-    }
-
-    /**
-     * LDAP + Local authentication
-     */
-    private function configureAuthentication(): void
-    {
-        Fortify::authenticateUsing(function (Request $request) {
-            
-            $request->validate([
-                'username' => 'required|string',
-                'password' => 'required|string',
-            ]);
-
-            $username = $request->username;
-            $password = $request->password;
-
-            try {
-                $connection = Container::getConnection('default');
-                $record = $connection->query()->findBy('samaccountname', $username);
-
-                /**
-                 * 🔁 Local fallback if user not found in LDAP
-                 */
-                if (! $record) {
-                    if (Auth::attempt(
-                        ['cpf_no' => $username, 'password' => $password],
-                        $request->boolean('remember')
-                    )) {
-                        return Auth::user();
-                    }
-
-                    return null;
-                }
-
-                /**
-                 * ✅ LDAP bind
-                 */
-                if (! $connection->auth()->attempt($record['dn'], $password)) {
-                    return null;
-                }
-
-                /**
-                 * 🔄 Sync / create local user
-                 */
-                return User::updateOrCreate(
-                    ['cpf_no' => $username],
-                    [
-                        'username' => $username,
-                        'name'     => $record['cn'][0] ?? '-',
-                        'email'    => $record['mail'][0] ?? null,
-                        'mobile'   => $record['telephonenumber'][0] ?? null,
-                        'location' => $record['physicaldeliveryofficename'][0] ?? null,
-                        'password' => Hash::make(Str::random(32)), // 🔒 never store LDAP password
-                    ]
-                );
-
-            } catch (\Throwable $e) {
-                Log::error('LDAP authentication error', [
-                    'user' => $username,
-                    'error' => $e->getMessage(),
-                ]);
-
-                /**
-                 * 🔁 Emergency fallback to local auth
-                 */
-                if (Auth::attempt(
-                    ['cpf_no' => $username, 'password' => $password],
-                    $request->boolean('remember')
-                )) {
-                    return Auth::user();
-                }
-
-                return null;
-            }
-        });
     }
 
     /**
@@ -125,7 +43,7 @@ class FortifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure Fortify views (Inertia)
+     * Configure Fortify views.
      */
     private function configureViews(): void
     {
@@ -149,7 +67,9 @@ class FortifyServiceProvider extends ServiceProvider
         ]));
 
         Fortify::registerView(fn () => Inertia::render('auth/register'));
+
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));
+
         Fortify::confirmPasswordView(fn () => Inertia::render('auth/confirm-password'));
     }
 
@@ -163,8 +83,9 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('login', function (Request $request) {
-            $key = Str::lower($request->input(Fortify::username())).'|'.$request->ip();
-            return Limit::perMinute(5)->by(Str::transliterate($key));
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+
+            return Limit::perMinute(5)->by($throttleKey);
         });
     }
 }
