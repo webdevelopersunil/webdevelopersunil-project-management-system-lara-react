@@ -207,11 +207,7 @@ export default function Login({
                                                         Password
                                                     </Label>
                                                     {canResetPassword && (
-                                                        <TextLink
-                                                            href={request()}
-                                                            className="text-sm text-blue-600 hover:text-blue-700"
-                                                            tabIndex={5}
-                                                        >
+                                                        <TextLink href={request()} className="text-sm text-blue-600 hover:text-blue-700" tabIndex={5} >
                                                             Forgot password?
                                                         </TextLink>
                                                     )}
