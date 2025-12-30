@@ -36,6 +36,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin',
+                'username' => '110011',
                 'password' => Hash::make('welcome@123'),
                 'email_verified_at' => now(),
             ]
@@ -53,6 +54,7 @@ class UserSeeder extends Seeder
             ['email' => 'dev@gmail.com'],
             [
                 'name' => 'Developer User',
+                'username' => '110012',
                 'password' => Hash::make('welcome@123'),
                 'email_verified_at' => now(),
             ]
@@ -69,6 +71,7 @@ class UserSeeder extends Seeder
             ['email' => 'pm@gmail.com'],
             [
                 'name' => 'Project Manager User',
+                'username' => '110013',
                 'password' => Hash::make('welcome@123'),
                 'email_verified_at' => now(),
             ]
@@ -85,6 +88,7 @@ class UserSeeder extends Seeder
             ['email' => 'req@gmail.com'],
             [
                 'name' => 'Requestor User',
+                'username' => '110014',
                 'password' => Hash::make('welcome@123'),
                 'email_verified_at' => now(),
             ]

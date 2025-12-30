@@ -174,21 +174,21 @@ export default function Login({
                                 {({ processing, errors }) => (
                                     <>
                                         <div className="space-y-6">
-                                            {/* Email Field */}
+                                            {/* Username Field */}
                                             <div className="space-y-2">
-                                                <Label htmlFor="email" className="flex items-center gap-2 text-gray-700">
+                                                <Label htmlFor="username" className="flex items-center gap-2 text-gray-700">
                                                     <Mail className="size-4" />
-                                                    Corporate Email
+                                                    Corporate CPF
                                                 </Label>
                                                 <div className="relative">
                                                     <Input
-                                                        id="email"
+                                                        id="username"
                                                         type="text"
-                                                        name="email"
+                                                        name="username"
                                                         required
                                                         autoFocus
                                                         tabIndex={1}
-                                                        autoComplete="email"
+                                                        autoComplete="username"
                                                         placeholder="firstname.lastname@ongc.co.in"
                                                         className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                                     />
