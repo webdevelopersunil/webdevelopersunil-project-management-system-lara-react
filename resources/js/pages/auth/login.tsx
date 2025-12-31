@@ -189,7 +189,7 @@ export default function Login({
                                                         autoFocus
                                                         tabIndex={1}
                                                         autoComplete="username"
-                                                        placeholder="Enter your cpf number"
+                                                        placeholder="Enter your cpf number."
                                                         className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                                     />
                                                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
