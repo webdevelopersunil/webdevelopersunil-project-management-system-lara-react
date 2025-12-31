@@ -174,29 +174,29 @@ export default function Login({
                                 {({ processing, errors }) => (
                                     <>
                                         <div className="space-y-6">
-                                            {/* email Field */}
+                                            {/* username Field */}
                                             <div className="space-y-2">
-                                                <Label htmlFor="email" className="flex items-center gap-2 text-gray-700">
+                                                <Label htmlFor="username" className="flex items-center gap-2 text-gray-700">
                                                     <Mail className="size-4" />
-                                                    Corporate CPF
+                                                    CPF Number
                                                 </Label>
                                                 <div className="relative">
                                                     <Input
-                                                        id="email"
+                                                        id="username"
                                                         type="text"
-                                                        name="email"
+                                                        name="username"
                                                         required
                                                         autoFocus
                                                         tabIndex={1}
-                                                        autoComplete="email"
-                                                        placeholder="firstname.lastname@ongc.co.in"
+                                                        autoComplete="username"
+                                                        placeholder="Enter your cpf number"
                                                         className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                                     />
                                                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                                                         @
                                                     </div>
                                                 </div>
-                                                <InputError message={errors.email} />
+                                                <InputError message={errors.username} />
                                             </div>
 
                                             {/* Password Field */}
