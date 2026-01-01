@@ -346,11 +346,11 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                 <span>Server Backup</span>
                                             </div>
                                             <span className="text-gray-400">|</span>
-                                            <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 rounded">
+                                            {/* <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 rounded">
                                                 <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
                                                 <span>Migration</span>
                                             </div>
-                                            <span className="text-gray-400">|</span>
+                                            <span className="text-gray-400">|</span> */}
                                             <div className="flex items-center gap-1 px-2 py-1 bg-yellow-50 rounded">
                                                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                                 <span>Public</span>
@@ -427,9 +427,9 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                                     </div>
 
                                                     {/* Migration */}
-                                                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.migrate_to_new_server ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-gray-100 border-gray-300 text-gray-600'}`}>
+                                                    {/* <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.migrate_to_new_server ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-gray-100 border-gray-300 text-gray-600'}`}>
                                                         {portal.migrate_to_new_server ? '↗' : '—'} Migrated To New
-                                                    </div>
+                                                    </div> */}
 
                                                     {/* Exposed to Internet */}
                                                     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold ${portal.is_public ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'}`}>
