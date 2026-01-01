@@ -36,7 +36,7 @@ class FortifyServiceProvider extends ServiceProvider
     /**
      * LDAP + Local authentication
      */
-    private function configureAuthentication(): void
+    private function configureAuthentication_old(): void
     {
         Fortify::authenticateUsing(function (Request $request) {
 
@@ -91,6 +91,63 @@ class FortifyServiceProvider extends ServiceProvider
             return null; // ❗ required
         });
     }
+    private function configureAuthentication(): void
+    {
+        Fortify::authenticateUsing(function (Request $request) {
+            
+            $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string',
+            ]);
+
+            $username = strtoupper($request->username);
+            $password = $request->password;
+
+            /**
+             * 1️ Try LDAP first
+             */
+            try {
+                $connection = Container::getConnection('default');
+                $record = $connection
+                    ->query()
+                    ->findBy('samaccountname', $username);
+
+                if ($record && $connection->auth()->attempt($record['dn'], $password)) {
+                    // Find or create user
+                    $user = User::updateOrCreate(
+                        ['username' => $username],
+                        [
+                            'name'              => $record['cn'][0] ?? $username,
+                            'email'             => $record['mail'][0] ?? null,
+                            'password'          => Hash::make($password),
+                            'last_login_at'     => now(),
+                            'email_verified_at' => now(),
+                            'status'            => 'active'
+                        ]
+                    );
+
+                    return $user; // Fortify will handle remember automatically
+                }
+            } catch (\Throwable $e) {
+                Log::warning('LDAP auth failed', [
+                    'user' => $username,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+            /**
+             * 2️ Fallback to local DB
+             */
+            $user = User::where('username', $username)->first();
+
+            if ($user && Hash::check($password, $user->password)) {
+                return $user; // Fortify will handle remember automatically
+            }
+
+            return null;
+        });
+    }
+
 
     /**
      * Configure Fortify actions.
