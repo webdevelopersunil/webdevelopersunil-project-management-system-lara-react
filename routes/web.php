@@ -7,7 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
-    return Inertia::render('welcome', [
+    return Inertia::render('auth/login', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
