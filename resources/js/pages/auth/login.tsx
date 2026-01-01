@@ -250,16 +250,6 @@ export default function Login({
                                                         Remember this device
                                                     </Label>
                                                 </div>
-                                                
-                                                <div className="text-xs">
-                                                    <span className="text-gray-500">Select Role:</span>
-                                                    <select className="ml-2 text-gray-700 bg-transparent border-none focus:outline-none">
-                                                        <option value="developer">Developer</option>
-                                                        <option value="project-manager">Project Manager</option>
-                                                        <option value="requestor">Requestor</option>
-                                                        <option value="admin">Admin</option>
-                                                    </select>
-                                                </div>
                                             </div>
 
                                             {/* Login Button */}
