@@ -365,7 +365,7 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                             <span className="text-gray-400">|</span>
                                             <div className="flex items-center gap-1 px-2 py-1 bg-green-50 rounded">
                                                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                                <span>Database(Version)</span>
+                                                <span>DB(Version)</span>
                                             </div>
                                         </div>
                                     </TableHead>
