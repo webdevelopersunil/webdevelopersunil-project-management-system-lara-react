@@ -229,7 +229,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                 <Eye className="h-4 w-4" />
                 View Live
               </button>
-              <button onClick={() => goToEdit(portal.id)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
+              <button onClick={() => goToEdit(portal.id)} className="inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-700">
                 <Edit className="h-4 w-4" />
                   Edit Portal
               </button>
@@ -476,7 +476,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                 </div>
                 
                 <div className="border-t border-sidebar-border/70 p-6 dark:border-sidebar-border">
-                  <button className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                  <button onClick={ () => { alert('hellow') } } className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                     <Users className="h-4 w-4" />
                     Invite New Collaborator
                   </button>
