@@ -76,8 +76,10 @@ export default function PortalRequestsPage({
   const [newMessage, setNewMessage] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<any[]>([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [showNewRequestForm, setShowNewRequestForm] = useState(false);
+  const [showNewRequestModal, setShowNewRequestModal] = useState(false);
+  const [newRequestPriority, setNewRequestPriority] = useState('Medium');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   
   const [filters, setFilters] = useState({
     search: initialFilters?.search || '',
@@ -113,6 +115,26 @@ export default function PortalRequestsPage({
   useEffect(() => {
     applyFilters();
   }, [filters, requests]);
+
+  // Close modal when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setShowNewRequestModal(false);
+      }
+    };
+
+    if (showNewRequestModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showNewRequestModal]);
 
   const applyFilters = () => {
     let filtered = [...requests];
@@ -187,7 +209,7 @@ export default function PortalRequestsPage({
       const formData = new FormData();
       formData.append('portal_id', portal.id.toString());
       formData.append('comments', newMessage);
-      formData.append('priority', filters.priority || 'Medium');
+      formData.append('priority', newRequestPriority);
       
       attachedFiles.forEach((fileObj, index) => {
         formData.append(`documents[${index}]`, fileObj.file);
@@ -196,7 +218,8 @@ export default function PortalRequestsPage({
       router.post('/portal-requests', formData, {
         onSuccess: () => {
           router.reload();
-          setShowNewRequestForm(false);
+          setShowNewRequestModal(false);
+          resetNewRequestForm();
         },
         onError: (errors) => {
           alert('Failed to submit request. Please try again.');
@@ -211,6 +234,12 @@ export default function PortalRequestsPage({
       alert('Failed to submit request. Please try again.');
       setSubmitting(false);
     }
+  };
+
+  const resetNewRequestForm = () => {
+    setNewMessage('');
+    setAttachedFiles([]);
+    setNewRequestPriority('Medium');
   };
 
   const handleStatusUpdate = async (requestUuid: string, newStatus: string) => {
@@ -277,6 +306,163 @@ export default function PortalRequestsPage({
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={`${portal.name} - Requests`} />
+      
+      {/* New Request Modal */}
+      {showNewRequestModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div 
+            ref={modalRef}
+            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border border-sidebar-border/70 bg-white shadow-xl dark:border-sidebar-border dark:bg-gray-900"
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-sidebar-border/70 bg-white p-4 dark:border-sidebar-border dark:bg-gray-900">
+              <div>
+                <h3 className="text-lg font-semibold">New Request</h3>
+                <p className="text-sm text-muted-foreground">Submit a new request for {portal.name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowNewRequestModal(false);
+                  resetNewRequestForm();
+                }}
+                className="rounded-lg p-2 hover:bg-sidebar"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-6">
+              <form onSubmit={handleSubmitRequest} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Priority</label>
+                  <div className="flex gap-2">
+                    {['Low', 'Medium', 'High'].map((priority) => (
+                      <button
+                        key={priority}
+                        type="button"
+                        onClick={() => setNewRequestPriority(priority)}
+                        className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${
+                          newRequestPriority === priority
+                            ? 'border-primary bg-primary text-white'
+                            : 'border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
+                        }`}
+                      >
+                        {priority}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2">Request Details *</label>
+                  <textarea
+                    placeholder="Describe your request in detail..."
+                    className="w-full rounded-lg border border-sidebar-border/70 bg-card p-3 min-h-[150px] text-sm focus:border-primary focus:outline-none dark:border-sidebar-border"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    required
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Be specific about what you need from the portal team
+                  </p>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2">Attachments</label>
+                  <div className="space-y-4">
+                    <div className="border-2 border-dashed border-sidebar-border/70 rounded-lg p-6 text-center dark:border-sidebar-border hover:border-primary/50 transition-colors cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileSelect}
+                        className="hidden"
+                        multiple
+                      />
+                      <Upload className="mx-auto size-10 text-muted-foreground mb-3" />
+                      <p className="text-sm font-medium">Drop files or click to upload</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Maximum file size: 10MB. Supported: images, documents, PDFs
+                      </p>
+                    </div>
+                    
+                    {attachedFiles.length > 0 && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Selected files ({attachedFiles.length})</span>
+                          <button
+                            type="button"
+                            onClick={() => setAttachedFiles([])}
+                            className="text-xs text-red-600 hover:text-red-800 dark:text-red-400"
+                          >
+                            Remove all
+                          </button>
+                        </div>
+                        <div className="max-h-60 space-y-2 overflow-y-auto">
+                          {attachedFiles.map((file) => (
+                            <div
+                              key={file.id}
+                              className="flex items-center justify-between rounded-lg border border-sidebar-border/70 p-3 dark:border-sidebar-border"
+                            >
+                              <div className="flex items-center gap-3">
+                                <File className="size-5 text-muted-foreground" />
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium truncate">{file.name}</p>
+                                  <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeAttachedFile(file.id)}
+                                className="rounded p-1.5 hover:bg-red-50 text-red-600 dark:hover:bg-red-900/30"
+                                title="Remove file"
+                              >
+                                <Trash2 className="size-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowNewRequestModal(false);
+                      resetNewRequestForm();
+                    }}
+                    className="rounded-lg border border-sidebar-border/70 bg-card px-5 py-2.5 text-sm font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting || !newMessage.trim()}
+                    className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2 min-w-[120px]"
+                  >
+                    {submitting ? (
+                      <>
+                        <RefreshCw className="size-4 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="size-4" />
+                        Submit Request
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         {/* Header Section */}
@@ -356,9 +542,9 @@ export default function PortalRequestsPage({
                       {showFilters ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
                     </button>
                     
-                    {/* Add Request Button */}
+                    {/* Add Request Button - Opens Modal */}
                     <button 
-                      onClick={() => setShowNewRequestForm(true)}
+                      onClick={() => setShowNewRequestModal(true)}
                       className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
                     >
                       <Plus className="size-4" />
@@ -504,7 +690,7 @@ export default function PortalRequestsPage({
                         </button>
                       ) : (
                         <button
-                          onClick={() => setShowNewRequestForm(true)}
+                          onClick={() => setShowNewRequestModal(true)}
                           className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary/90"
                         >
                           <Plus className="size-4" />
@@ -522,7 +708,6 @@ export default function PortalRequestsPage({
                           }`}
                           onClick={() => {
                             setActiveRequest(request);
-                            setShowNewRequestForm(false);
                           }}
                         >
                           <div className="flex items-start justify-between">
@@ -568,7 +753,6 @@ export default function PortalRequestsPage({
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setActiveRequest(request);
-                                      setShowNewRequestForm(false);
                                     }}
                                     className="rounded p-1 hover:bg-sidebar text-muted-foreground hover:text-foreground"
                                     title="View details"
@@ -625,9 +809,9 @@ export default function PortalRequestsPage({
             </div>
           </div>
           
-          {/* Right Column - Chat & Details OR New Request Form */}
+          {/* Right Column - Request Details (Only, no form) */}
           <div className="lg:col-span-1">
-            {activeRequest && !showNewRequestForm ? (
+            {activeRequest && (
               <div className="overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                 <div className="border-b border-sidebar-border/70 p-4 dark:border-sidebar-border">
                   <div className="flex items-center justify-between">
@@ -741,10 +925,7 @@ export default function PortalRequestsPage({
                       </div>
                       
                       <button
-                        onClick={() => {
-                          setActiveRequest(null);
-                          setShowNewRequestForm(true);
-                        }}
+                        onClick={() => setShowNewRequestModal(true)}
                         className="w-full rounded-lg bg-primary py-2 text-sm font-medium text-white hover:bg-primary/90"
                       >
                         <Plus className="size-4 inline mr-2" />
@@ -754,134 +935,23 @@ export default function PortalRequestsPage({
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                <div className="border-b border-sidebar-border/70 p-4 dark:border-sidebar-border">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold">New Request</h3>
-                      <p className="text-xs text-muted-foreground">Submit a new request</p>
-                    </div>
-                    {showNewRequestForm && (
-                      <button
-                        onClick={() => setShowNewRequestForm(false)}
-                        className="rounded p-1 hover:bg-sidebar"
-                      >
-                        <X className="size-4" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="p-4">
-                  <form onSubmit={handleSubmitRequest} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Priority</label>
-                      <select
-                        value={filters.priority || 'Medium'}
-                        onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
-                        className="w-full rounded border border-sidebar-border/70 bg-card px-3 py-2 text-sm focus:border-primary focus:outline-none dark:border-sidebar-border"
-                        required
-                      >
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                      </select>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Request Details</label>
-                      <textarea
-                        placeholder="Describe your request..."
-                        className="w-full rounded border border-sidebar-border/70 bg-card p-3 min-h-[120px] text-sm focus:border-primary focus:outline-none dark:border-sidebar-border"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Attachments</label>
-                      <div className="space-y-3">
-                        <div className="border-2 border-dashed border-sidebar-border/70 rounded-lg p-4 text-center dark:border-sidebar-border">
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileSelect}
-                            className="hidden"
-                            multiple
-                          />
-                          <Upload className="mx-auto size-8 text-muted-foreground" />
-                          <p className="mt-2 text-xs font-medium">Drop files or click to upload</p>
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="mt-2 text-xs text-primary hover:underline"
-                          >
-                            Select Files
-                          </button>
-                        </div>
-                        
-                        {attachedFiles.length > 0 && (
-                          <div className="space-y-2">
-                            {attachedFiles.map((file) => (
-                              <div
-                                key={file.id}
-                                className="flex items-center justify-between rounded-lg border border-sidebar-border/70 p-2 dark:border-sidebar-border"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <File className="size-4" />
-                                  <div className="min-w-0">
-                                    <p className="text-xs font-medium truncate">{file.name}</p>
-                                    <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
-                                  </div>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => removeAttachedFile(file.id)}
-                                  className="rounded p-1 hover:bg-red-50 text-red-600 dark:hover:bg-red-900/30"
-                                >
-                                  <Trash2 className="size-3" />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <button
-                      type="submit"
-                      disabled={submitting || !newMessage.trim()}
-                      className="w-full rounded-lg bg-primary py-2.5 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2"
-                    >
-                      {submitting ? (
-                        <>
-                          <RefreshCw className="size-4 animate-spin" />
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="size-4" />
-                          Submit Request
-                        </>
-                      )}
-                    </button>
-                    
-                    {activeRequest && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowNewRequestForm(false);
-                          setActiveRequest(null);
-                        }}
-                        className="w-full rounded-lg border border-sidebar-border/70 bg-card py-2.5 text-sm font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border"
-                      >
-                        Cancel
-                      </button>
-                    )}
-                  </form>
-                </div>
+            )}
+            
+            {/* Empty state for right column */}
+            {!activeRequest && (
+              <div className="overflow-hidden rounded-xl border border-sidebar-border/70 p-6 text-center dark:border-sidebar-border">
+                <MessageSquare className="mx-auto size-12 text-muted-foreground mb-3" />
+                <h3 className="text-sm font-medium mb-1">No request selected</h3>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Select a request from the list to view details
+                </p>
+                {/* <button
+                  onClick={() => setShowNewRequestModal(true)}
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
+                >
+                  <Plus className="size-4" />
+                  Add New Request
+                </button> */}
               </div>
             )}
           </div>
