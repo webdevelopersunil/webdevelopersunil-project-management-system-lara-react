@@ -270,6 +270,10 @@ export default function PortalRequestsPage({
     });
   };
 
+  const goToEdit = async (id:any) => {
+    router.get(`/portals/${id}/edit`);
+  };
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={`${portal.name} - Requests`} />
@@ -314,20 +318,14 @@ export default function PortalRequestsPage({
             </div>
             
             <div className="flex items-center gap-2">
-              <Link
-                href={`/portals/${portal.id}`}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-sidebar-border/70 bg-card px-4 py-2.5 text-sm font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border"
-              >
-                <Eye className="size-4" />
-                View Portal
-              </Link>
-              <Link
-                href={`/portals/${portal.id}/edit`}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90"
-              >
-                <Edit className="size-4" />
-                Edit Portal
-              </Link>
+              <button onClick={() => { window.open(portal.url, "_blank", "noopener,noreferrer"); }} className=" inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                <Eye className="h-4 w-4" />
+                View Live
+              </button>
+              <button onClick={() => goToEdit(portal.id)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
+                <Edit className="h-4 w-4" />
+                  Edit Portal
+              </button>
             </div>
           </div>
         </div>
