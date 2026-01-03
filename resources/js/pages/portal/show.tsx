@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { router } from "@inertiajs/react";
 
 type props = {
   portal: any;
@@ -136,110 +137,6 @@ const configurationData = {
   }
 };
 
-// Monitoring data
-const monitoringData = {
-  metrics: {
-    cpu_usage: 45,
-    memory_usage: 62,
-    disk_usage: 78,
-    network_in: '125 MB/s',
-    network_out: '89 MB/s',
-    request_rate: '1,250 req/sec',
-    error_rate: '0.8%'
-  },
-  alerts: [
-    { id: 1, type: 'warning', message: 'High memory usage detected', time: '2 hours ago' },
-    { id: 2, type: 'info', message: 'Database backup completed', time: '5 hours ago' }
-  ],
-  logs: [
-    { id: 1, type: 'access', message: 'User login from IP 192.168.1.50', time: '10:30 AM' },
-    { id: 2, type: 'system', message: 'Cache cleared successfully', time: '10:15 AM' }
-  ]
-};
-
-// Settings data
-const settingsData = {
-  general: {
-    portal_name: 'CustomerPro Portal',
-    contact_email: 'support@customerpro.com',
-    timezone: 'UTC',
-    language: 'English'
-  },
-  notifications: {
-    email_alerts: true,
-    slack_alerts: false,
-    alert_types: {
-      system_down: true,
-      high_cpu: true,
-      disk_space: true
-    }
-  },
-  integrations: {
-    google_analytics: true,
-    sentry: true,
-    datadog: false
-  }
-};
-
-// Mock collaborations data
-const collaborations = [
-  {
-    id: 1,
-    user: {
-      name: 'Sarah Chen',
-      email: 'sarah.chen@dev.com',
-      avatar: 'SC',
-      role: 'Lead Developer'
-    },
-    permissions: ['view', 'edit', 'deploy', 'manage'],
-    status: 'active',
-    start_date: '2024-01-20',
-    end_date: '2024-12-31',
-    notes: 'Primary developer for core features'
-  },
-  {
-    id: 2,
-    user: {
-      name: 'Mike Rodriguez',
-      email: 'mike.rod@dev.com',
-      avatar: 'MR',
-      role: 'DevOps Engineer'
-    },
-    permissions: ['view', 'deploy', 'monitor'],
-    status: 'active',
-    start_date: '2024-02-10',
-    end_date: null,
-    notes: 'Server maintenance and deployments'
-  },
-  {
-    id: 3,
-    user: {
-      name: 'Emma Wilson',
-      email: 'emma.w@design.com',
-      avatar: 'EW',
-      role: 'UI/UX Designer'
-    },
-    permissions: ['view', 'edit'],
-    status: 'pending',
-    start_date: null,
-    end_date: null,
-    notes: 'Design system updates'
-  },
-  {
-    id: 4,
-    user: {
-      name: 'David Park',
-      email: 'david.park@qa.com',
-      avatar: 'DP',
-      role: 'QA Engineer'
-    },
-    permissions: ['view', 'test'],
-    status: 'active',
-    start_date: '2024-03-01',
-    end_date: '2024-06-30',
-    notes: 'Automated testing setup'
-  }
-];
 
 // Status badge configuration
 const statusConfig = {
@@ -270,6 +167,10 @@ const permissionColors = {
   test: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400'
 };
 
+const goToEdit = async (id:any) => {
+  router.get(`/portals/${id}/edit`);
+};
+
 export default function PortalShow( { portal, owner, collaborators } : props ) {
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -292,9 +193,6 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
       <div className="flex h-full flex-1 flex-col gap-6 p-6">
         {/* Header Section */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-8 dark:from-primary/20">
-          <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8">
-            <PlaceholderPattern className="size-full stroke-primary/10 dark:stroke-primary/20" />
-          </div>
           
           <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="space-y-3">
@@ -327,95 +225,18 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
             </div>
             
             <div className="flex items-center gap-3">
-              <button className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+              <button onClick={() => { window.open(portal.url, "_blank", "noopener,noreferrer"); }} className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                 <Eye className="h-4 w-4" />
                 View Live
               </button>
-              <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
+              <button onClick={() => goToEdit(portal.id)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
                 <Edit className="h-4 w-4" />
-                Edit Portal
+                  Edit Portal
               </button>
             </div>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-emerald-100 p-2.5 dark:bg-emerald-900/30">
-                <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Uptime</p>
-                <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                  {portalData.stats.uptime}
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-blue-100 p-2.5 dark:bg-blue-900/30">
-                <Zap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Response Time</p>
-                <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                  {portalData.stats.response_time}
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-purple-100 p-2.5 dark:bg-purple-900/30">
-                <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Daily Visitors</p>
-                <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                  {portalData.stats.daily_visitors.toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-amber-100 p-2.5 dark:bg-amber-900/30">
-                <HardDrive className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Storage Used</p>
-                <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                  {portalData.stats.storage_used}
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-green-100 p-2.5 dark:bg-green-900/30">
-                <BarChart3 className="h-5 w-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Growth</p>
-                <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                  +{portalData.stats.monthly_growth}%
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
-
-        
 
         {/* Tabs Navigation */}
         <div className="border-b border-sidebar-border/70 dark:border-sidebar-border">
@@ -553,7 +374,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                           <Server className="h-5 w-5 text-green-600 dark:text-green-400" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Server Type</p>
+                          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Machine Type</p>
                           <p className="text-gray-900 dark:text-white">{portal.machine_type}</p>
                         </div>
                       </div>
@@ -581,12 +402,12 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                     Team Collaborations
                   </h2>
                   <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    {collaborations.length} team members have access to this portal
+                    {collaborators.length} team members have access to this portal
                   </p>
                 </div>
                 
                 <div className="divide-y divide-sidebar-border/70 dark:divide-sidebar-border">
-                  {collaborations.map((collab) => (
+                  {collaborators.map((collab:any) => (
                     <div key={collab.id} className="p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3">
@@ -678,7 +499,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                         <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Portal Name</label>
                         <input
                           type="text"
-                          defaultValue={settingsData.general.portal_name}
+                          defaultValue={11}
                           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
                         />
                       </div>
@@ -695,7 +516,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                       <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Contact Email</label>
                       <input
                         type="email"
-                        defaultValue={settingsData.general.contact_email}
+                        defaultValue={portal.name}
                         className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
                       />
                     </div>
@@ -712,7 +533,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                       <span className="text-sm text-gray-700 dark:text-gray-300">Email Alerts</span>
                       <input
                         type="checkbox"
-                        defaultChecked={settingsData.notifications.email_alerts}
+                        defaultChecked={portal.status}
                         className="h-4 w-4 rounded border-gray-300"
                       />
                     </label>
@@ -720,7 +541,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                       <span className="text-sm text-gray-700 dark:text-gray-300">Slack Alerts</span>
                       <input
                         type="checkbox"
-                        defaultChecked={settingsData.notifications.slack_alerts}
+                        defaultChecked={portal.status}
                         className="h-4 w-4 rounded border-gray-300"
                       />
                     </label>
@@ -728,7 +549,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
                       <span className="text-sm text-gray-700 dark:text-gray-300">System Down Alerts</span>
                       <input
                         type="checkbox"
-                        defaultChecked={settingsData.notifications.alert_types.system_down}
+                        defaultChecked={portal.status}
                         className="h-4 w-4 rounded border-gray-300"
                       />
                     </label>
