@@ -36,8 +36,8 @@ class PortalRequestController extends Controller
         }
         
         // Apply status filter
-        if ($request->has('status') && !empty($request->status) && $request->status !== 'all') {
-            $query->where('status', $request->status);
+        if ($request->has('status') && $request->status == 0 || $request->status == 1 ) {
+            $query->where('active', $request->status);
         }
         
         // Get paginated results
