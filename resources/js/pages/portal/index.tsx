@@ -281,10 +281,9 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                                     value={status}
                                     onChange={(e) => setStatus(e.target.value)}
                                 >
-                                    <option value="">All Status</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="pending">Pending</option>
+                                    <option value="">Status</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
                                 </select>
                                 <Button variant="outline" onClick={() => { setSearch(''); setStatus(''); }} >
                                     Clear Filters
