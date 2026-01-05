@@ -202,7 +202,7 @@ export default function PortalRequestsPage({
       alert('Please enter a message');
       return;
     }
-    
+    console.log('submit request')
     setSubmitting(true);
     
     try {
@@ -210,10 +210,10 @@ export default function PortalRequestsPage({
       formData.append('portal_id', portal.id.toString());
       formData.append('comments', newMessage);
       formData.append('priority', newRequestPriority);
-      
       attachedFiles.forEach((fileObj, index) => {
         formData.append(`documents[${index}]`, fileObj.file);
       });
+      console.log(formData)
 
       router.post('/portal-requests', formData, {
         onSuccess: () => {
@@ -222,7 +222,8 @@ export default function PortalRequestsPage({
           resetNewRequestForm();
         },
         onError: (errors) => {
-          alert('Failed to submit request. Please try again.');
+          console.log(errors);
+          alert('Failed to submit request. Please try again 1.');
         },
         onFinish: () => {
           setSubmitting(false);
@@ -231,7 +232,7 @@ export default function PortalRequestsPage({
       
     } catch (error) {
       console.error('Error submitting request:', error);
-      alert('Failed to submit request. Please try again.');
+      alert('Failed to submit request. Please try again 2.');
       setSubmitting(false);
     }
   };

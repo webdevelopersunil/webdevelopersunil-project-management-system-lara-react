@@ -17,6 +17,14 @@
 .env.*
 !.env.example
 
+
+# ===============================
+# resources/js/routes (runtime / routes / controller)
+# ===============================
+/resources/js/actions
+/resources/js/routes
+
+
 # ===============================
 # Storage (runtime / cache / logs)
 # ===============================

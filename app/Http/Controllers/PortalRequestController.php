@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia; // If using Inertia.js
+use Illuminate\Support\Facades\Auth;
 
 class PortalRequestController extends Controller
 {
@@ -57,91 +58,61 @@ class PortalRequestController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new portal request.
-     *
-     * @return \Inertia\Response|\Illuminate\View\View
-     */
-    public function create()
-    {
-        $portals = Portal::select('id', 'name')->get();
-        
-        if (class_exists(Inertia::class)) {
-            return Inertia::render('PortalRequests/Create', [
-                'portals' => $portals,
-                'priorities' => ['Low', 'Medium', 'High'],
-            ]);
-        }
-        
-        return response()->json([
+    public function create(Request $request)
+{
+    $portals = Portal::select('id', 'name')->get();
+    
+    if (class_exists(Inertia::class)) {
+        return Inertia::render('PortalRequests/Create', [
             'portals' => $portals,
             'priorities' => ['Low', 'Medium', 'High'],
         ]);
     }
+}
 
-    /**
-     * Store a newly created portal request.
-     *
-     * @param StorePortalRequest $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
-    public function store(StorePortalRequest $request)
-    {
-        DB::beginTransaction();
-        
-        try {
-            // Create the portal request
-            $portalRequest = PortalRequest::create([
-                'portal_id' => $request->portal_id,
-                'submitted_by' => auth()->id(),
-                'priority' => $request->priority ?? 'Medium',
-                'status' => 'Pending',
-                'comments' => $request->comments,
-                'request_uuid' => Str::uuid(),
+public function store(Request $request)
+{
+    // Validate the request
+    $validated = $request->validate([
+        'portal_id' => 'required|exists:portals,id',
+        'comments' => 'required|string|min:10',
+        'priority' => 'required|in:Low,Medium,High',
+        'documents' => 'nullable|array',
+        'documents.*' => 'file|max:10240', // 10MB max per file
+    ]);
+
+    // Create the portal request
+    $portalRequest = PortalRequest::create([
+        'portal_id' => $validated['portal_id'],
+        'comments' => $validated['comments'],
+        'priority' => $validated['priority'],
+        'submitted_by' => Auth::user()->id, // or get from session
+        'status' => 'Pending',
+    ]);
+    
+
+    // Handle file uploads if any
+    if ($request->hasFile('documents')) {
+        foreach ($request->file('documents') as $file) {
+
+            $path = $file->store('portal-requests/documents', 'public');
+
+            PortalRequestDocument::create([
+                'portal_request_id' => $portalRequest->id,
+                'name'              => $file->getClientOriginalName(),
+                'path'              => $path,
+                'size'              => $file->getSize(),
+                'mime_type'         => $file->getMimeType(),
             ]);
-            
-            // Handle document uploads if present
-            if ($request->hasFile('documents')) {
-                foreach ($request->file('documents') as $document) {
-                    $this->uploadDocument($portalRequest, $document);
-                }
-            }
-            
-            DB::commit();
-            
-            // Flash success message
-            session()->flash('success', 'Portal request submitted successfully! Reference: ' . $portalRequest->reference);
-            
-            // Return response based on request type
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Portal request submitted successfully!',
-                    'data' => [
-                        'id' => $portalRequest->id,
-                        'uuid' => $portalRequest->request_uuid,
-                        'reference' => $portalRequest->reference,
-                    ],
-                    'redirect' => route('portal-requests.show', $portalRequest->request_uuid),
-                ]);
-            }
-            
-            return redirect()->route('portal-requests.show', $portalRequest->request_uuid);
-            
-        } catch (\Exception $e) {
-            DB::rollBack();
-            
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to submit portal request. Please try again.',
-                    'error' => config('app.debug') ? $e->getMessage() : null,
-                ], 500);
-            }
-            
-            return redirect()->back()->withErrors(['error' => 'Failed to submit portal request. Please try again.']);
         }
     }
+    
+    // Redirect with success message
+    return redirect()->back()->with('success', 'Request submitted successfully.');
+    
+    // Or if using Inertia.js redirect
+    // return Inertia::location(route('portal-requests.index'));
+}
 
     /**
      * Display the specified portal request.
