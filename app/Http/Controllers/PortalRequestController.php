@@ -59,60 +59,57 @@ class PortalRequestController extends Controller
     }
 
     public function create(Request $request)
-{
-    $portals = Portal::select('id', 'name')->get();
-    
-    if (class_exists(Inertia::class)) {
-        return Inertia::render('PortalRequests/Create', [
-            'portals' => $portals,
-            'priorities' => ['Low', 'Medium', 'High'],
-        ]);
-    }
-}
-
-public function store(Request $request)
-{
-    // Validate the request
-    $validated = $request->validate([
-        'portal_id' => 'required|exists:portals,id',
-        'comments' => 'required|string|min:10',
-        'priority' => 'required|in:Low,Medium,High',
-        'documents' => 'nullable|array',
-        'documents.*' => 'file|max:10240', // 10MB max per file
-    ]);
-
-    // Create the portal request
-    $portalRequest = PortalRequest::create([
-        'portal_id' => $validated['portal_id'],
-        'comments' => $validated['comments'],
-        'priority' => $validated['priority'],
-        'submitted_by' => Auth::user()->id, // or get from session
-        'status' => 'Pending',
-    ]);
-    
-
-    // Handle file uploads if any
-    if ($request->hasFile('documents')) {
-        foreach ($request->file('documents') as $file) {
-
-            $path = $file->store('portal-requests/documents', 'public');
-
-            PortalRequestDocument::create([
-                'portal_request_id' => $portalRequest->id,
-                'name'              => $file->getClientOriginalName(),
-                'path'              => $path,
-                'size'              => $file->getSize(),
-                'mime_type'         => $file->getMimeType(),
+    {
+        $portals = Portal::select('id', 'name')->get();
+        
+        if (class_exists(Inertia::class)) {
+            return Inertia::render('PortalRequests/Create', [
+                'portals' => $portals,
+                'priorities' => ['Low', 'Medium', 'High'],
             ]);
         }
     }
-    
-    // Redirect with success message
-    return redirect()->back()->with('success', 'Request submitted successfully.');
-    
-    // Or if using Inertia.js redirect
-    // return Inertia::location(route('portal-requests.index'));
-}
+
+    public function store(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'portal_id' => 'required|exists:portals,id',
+            'comments' => 'required|string',
+            'priority' => 'required|in:Low,Medium,High',
+            'documents' => 'nullable|array',
+            'documents.*' => 'file|max:10240',
+        ]);
+
+        // Create the portal request
+        $portalRequest = PortalRequest::create([
+            'portal_id' => $validated['portal_id'],
+            'comments' => $validated['comments'],
+            'priority' => $validated['priority'],
+            'submitted_by' => Auth::user()->id, // or get from session
+            'status' => 'Pending',
+        ]);
+        
+
+        // Handle file uploads if any
+        if ($request->hasFile('documents')) {
+            foreach ($request->file('documents') as $file) {
+
+                $path = $file->store('portal-requests/documents', 'public');
+
+                PortalRequestDocument::create([
+                    'portal_request_id' => $portalRequest->id,
+                    'name'              => $file->getClientOriginalName(),
+                    'path'              => $path,
+                    'size'              => $file->getSize(),
+                    'mime_type'         => $file->getMimeType(),
+                ]);
+            }
+        }
+        
+        return Inertia::location(route('portal-requests.show', $portalRequest->id));
+        
+    }
 
     /**
      * Display the specified portal request.

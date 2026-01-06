@@ -202,7 +202,7 @@ export default function PortalRequestsPage({
       alert('Please enter a message');
       return;
     }
-    console.log('submit request')
+    
     setSubmitting(true);
     
     try {
@@ -223,7 +223,7 @@ export default function PortalRequestsPage({
         },
         onError: (errors) => {
           console.log(errors);
-          alert('Failed to submit request. Please try again 1.');
+          alert('Failed to submit request. Please try again.');
         },
         onFinish: () => {
           setSubmitting(false);
