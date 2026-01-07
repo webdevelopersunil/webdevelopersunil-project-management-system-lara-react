@@ -12,23 +12,19 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin|developer'])->group(function () {
+
     Route::get('dashboard',[DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/2',[DashboardController::class, 'index2'])->name('dashboard-2');
     Route::get('dashboard/3',[DashboardController::class, 'index3'])->name('dashboard-3');
-});
 
-
-Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)->only(['index']);
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::put('/users/{user}/roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
     Route::put('/users/{user}/status', [UserController::class, 'updateStatus'])->name('users.status.update');
+    
+    Route::get('users', [ UserController::class, 'index' ] )->name('users.index');
 });
-
-
-// Users Module Routes
-Route::get('users', [ UserController::class, 'index' ] )->name('users.index');
 
 
 // Fallback route - redirects unknown routes to "/"
