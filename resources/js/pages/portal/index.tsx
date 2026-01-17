@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage, router } from '@inertiajs/react';
-import ConfirmDelete from "@/components/confirm-delete";
+import ConfirmDelete from '@/components/confirm-delete';
 import {
     Table,
     TableBody,
@@ -13,7 +13,6 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -30,17 +29,20 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { 
-    Search, 
-    Plus, 
-    MoreVertical, 
-    Edit, 
-    Eye, 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+    Search,
+    Plus,
+    MoreVertical,
+    Edit,
+    Eye,
     Info,
     ChevronLeft,
     ChevronRight,
     ChevronsLeft,
-    ChevronsRight
+    ChevronsRight,
+    CheckCircle,
+    AlertCircle,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -57,7 +59,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 
 export interface Portal {
-
+ 
   id: number;
   name: string;
   description: string | null;
@@ -135,15 +137,13 @@ const getDomain = (url:string) => {
 
 export default function PortalPage({ portals, total, current_page, last_page, per_page, from, to, filters, links  }: PortalProps) {
 
-    const { url }               = usePage();
-    const [search, setSearch]   = useState(filters.search || '');
-    const [status, setStatus]   = useState(filters.status || '');
+    const { url } = usePage();
+    const [search, setSearch] = useState(filters.search || '');
+    const [status, setStatus] = useState(filters.status || '');
     const [debouncedSearch, setDebouncedSearch] = useState(search);
-
-
-
-
-    const { flash } = usePage().props as { flash?: { success?: string; error?: string } };
+    const { flash } = usePage().props as {
+        flash?: { success?: string; error?: string };
+    };
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState<'success' | 'error'>('success');
@@ -153,24 +153,23 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
             setMessage(flash.success);
             setMessageType('success');
             setShowMessage(true);
-            
-            // Auto-hide after 5 seconds
+
             const timer = setTimeout(() => {
                 setShowMessage(false);
-            }, 5000);
-            
+            }, 4000);
+
             return () => clearTimeout(timer);
         }
-        
+
         if (flash?.error) {
             setMessage(flash.error);
             setMessageType('error');
             setShowMessage(true);
-            
+
             const timer = setTimeout(() => {
                 setShowMessage(false);
-            }, 5000);
-            
+            }, 4000);
+
             return () => clearTimeout(timer);
         }
     }, [flash]);
@@ -241,9 +240,8 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Portals" />
-            
+
             <div className="container mx-auto p-6">
-                {/* Header Section */}
                 <div className="mb-8">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
@@ -260,6 +258,33 @@ export default function PortalPage({ portals, total, current_page, last_page, pe
                         </Link>
                     </div>
                 </div>
+
+                {showMessage && (
+                    <div className="mb-6">
+                        <Alert
+                            variant={
+                                messageType === 'error' ? 'destructive' : undefined
+                            }
+                        >
+                            {messageType === 'error' ? (
+                                <AlertCircle className="h-4 w-4" />
+                            ) : (
+                                <CheckCircle className="h-4 w-4" />
+                            )}
+                            <AlertTitle>
+                                {messageType === 'error' ? 'Error' : 'Success'}
+                            </AlertTitle>
+                            <AlertDescription>{message}</AlertDescription>
+                            <button
+                                type="button"
+                                onClick={() => setShowMessage(false)}
+                                className="ml-auto text-xs font-medium text-muted-foreground hover:text-foreground"
+                            >
+                                ×
+                            </button>
+                        </Alert>
+                    </div>
+                )}
 
 
                 {/* Search and Filters */}
