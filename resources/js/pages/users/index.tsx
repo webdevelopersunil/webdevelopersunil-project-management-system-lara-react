@@ -2,7 +2,7 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, router } from '@inertiajs/react';
 import { 
   Users, 
   UserPlus, 
@@ -54,7 +54,9 @@ interface User {
   last_login?: string;
 }
 
-interface PageProps {
+import { type PageProps as InertiaPageProps } from '@inertiajs/core';
+
+interface PageProps extends InertiaPageProps {
   users: User[];
   availableRoles: string[];
   availablePermissions: string[];
@@ -95,17 +97,25 @@ export default function UsersIndex() {
   const itemsPerPage = 10;
 
   // Refresh users data
-  const refreshUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('/users');
-      setUsers(response.data.users);
-    } catch (error) {
-      console.error('Error refreshing users:', error);
-    } finally {
-      setLoading(false);
-    }
+  const refreshUsers = () => {
+    setLoading(true);
+    router.reload({
+      only: ['users', 'statistics'],
+      onSuccess: () => {
+        setLoading(false);
+      },
+      onError: () => {
+        setLoading(false);
+      }
+    });
   };
+
+  // Sync initial users when Inertia props update
+  useEffect(() => {
+    if (initialUsers) {
+      setUsers(initialUsers);
+    }
+  }, [initialUsers]);
 
   // Calculate statistics from current filtered users
   const currentStats = {

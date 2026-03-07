@@ -31,6 +31,7 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -90,6 +91,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       setUserStatus(user.status);
     } catch (err) {
       setError('Failed to load user data');
+      toast.error('Failed to load user data');
       console.error('Error fetching user data:', err);
     } finally {
       setLoading(false);
@@ -141,8 +143,10 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       if (user) {
         setUser({ ...user, status });
       }
-    } catch (err) {
+      toast.success(`User status updated to ${status}`);
+    } catch (err: any) {
       console.error('Error updating status:', err);
+      toast.error(err.response?.data?.message || 'Failed to update user status');
     }
   };
 
@@ -156,12 +160,15 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
         permissions: selectedPermissions,
       });
 
+      toast.success('User updated successfully');
+
       if (onSuccess) {
         onSuccess();
       }
       onClose();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to update user');
+      toast.error(err.response?.data?.message || 'Failed to update user');
     } finally {
       setSaving(false);
     }
