@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { ArrowLeft, Save, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from 'sonner';
 
 const breadcrumbs = [
     {
@@ -48,7 +49,14 @@ export default function PortalCreate() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/portals');
+        post('/portals', {
+            onSuccess: () => {
+                toast.success('Portal created successfully.');
+            },
+            onError: () => {
+                toast.error('Failed to create portal. Please check the form errors.');
+            }
+        });
     }; 
 
     return (

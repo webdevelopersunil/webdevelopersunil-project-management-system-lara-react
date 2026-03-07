@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { ArrowLeft, Save, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from 'sonner';
 
 interface Portal {
     id: number;
@@ -73,7 +74,14 @@ export default function PortalEdit({ portal }: EditProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/portals/${portal.id}`);
+        put(`/portals/${portal.id}`, {
+            onSuccess: () => {
+                toast.success('Portal updated successfully.');
+            },
+            onError: () => {
+                toast.error('Failed to update portal. Please check the form errors.');
+            }
+        });
     };
 
     return (
@@ -207,7 +215,7 @@ export default function PortalEdit({ portal }: EditProps) {
                                         </Label>
                                         <Select
                                             value={data.machine_type}
-                                            onValueChange={(value) => setData('machine_type', value)}
+                                            onValueChange={(value) => setData('machine_type', value as Portal['machine_type'])}
                                         >
                                             <SelectTrigger className={errors.machine_type ? 'border-red-500' : ''}>
                                                 <SelectValue placeholder="Select machine type" />
@@ -300,7 +308,7 @@ export default function PortalEdit({ portal }: EditProps) {
                                         </Label>
                                         <Select
                                             value={data.status}
-                                            onValueChange={(value) => setData('status', value)}
+                                            onValueChange={(value) => setData('status', value as Portal['status'])}
                                         >
                                             <SelectTrigger className={errors.status ? 'border-red-500' : ''}>
                                                 <SelectValue placeholder="Select status" />
