@@ -35,6 +35,16 @@ class PortalRequestDocument extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'url',
+        'formatted_size',
+    ];
+
+    /**
      * Get the portal request associated with the document.
      */
     public function portalRequest()

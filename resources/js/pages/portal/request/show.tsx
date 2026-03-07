@@ -32,7 +32,8 @@ import {
   AlertCircle,
   Check,
   SlidersHorizontal,
-  Trash2
+  Trash2,
+  EyeOff
 } from 'lucide-react';
 
 interface PortalRequestsPageProps {
@@ -923,16 +924,50 @@ export default function PortalRequestsPage({
                                   >
                                     <Edit className="size-4" />
                                   </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      // Handle download or other actions
-                                    }}
-                                    className="rounded p-1 hover:bg-sidebar text-muted-foreground hover:text-foreground"
-                                    title="Download files"
-                                  >
-                                    <Download className="size-4" />
-                                  </button>
+                                  
+                                  {request.documents && request.documents.length > 0 ? (
+                                    <>
+                                      <a
+                                        href={request.documents[0].url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="rounded p-1 hover:bg-sidebar text-muted-foreground hover:text-foreground"
+                                        title="View document"
+                                      >
+                                        <Eye className="size-4" />
+                                      </a>
+                                      <a
+                                        href={request.documents[0].url}
+                                        download
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="rounded p-1 hover:bg-sidebar text-muted-foreground hover:text-foreground"
+                                        title="Download document"
+                                      >
+                                        <Download className="size-4" />
+                                      </a>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <button
+                                        disabled
+                                        className="rounded p-1 opacity-40 cursor-not-allowed text-muted-foreground"
+                                        title="No document to view"
+                                      >
+                                        <EyeOff className="size-4" />
+                                      </button>
+                                      <button
+                                        disabled
+                                        className="rounded p-1 opacity-40 cursor-not-allowed text-muted-foreground relative"
+                                        title="No document to download"
+                                      >
+                                        <Download className="size-4" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                          <div className="w-[18px] h-[1.5px] bg-muted-foreground rotate-45 transform origin-center scale-x-110"></div>
+                                        </div>
+                                      </button>
+                                    </>
+                                  )}
                                 </div>
                               </div>
                             </div>
