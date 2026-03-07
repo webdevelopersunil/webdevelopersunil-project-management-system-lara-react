@@ -279,7 +279,8 @@ export default function PortalRequestsPage({
     
     setUpdatingRequest(true);
     try {
-      const uuid = activeRequest.uuid || activeRequest.id;
+      // The backend uses request_uuid for its lookups on update/edit endpoints
+      const uuid = activeRequest.request_uuid || activeRequest.uuid || activeRequest.id;
       
       await axios.put(`/portal-requests/${uuid}`, {
         portal_id: portal.id,
@@ -867,7 +868,7 @@ export default function PortalRequestsPage({
                     <div className="divide-y divide-sidebar-border/70 dark:divide-sidebar-border">
                       {filteredRequests.map((request) => (
                         <div
-                          key={request.uuid || request.id}
+                          key={request.request_uuid || request.id}
                           className="p-4 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer transition-colors"
                           onClick={() => {
                             openEditModal(request);
