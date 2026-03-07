@@ -80,6 +80,21 @@ export default function PortalRequestsPage({
   const [showFilters, setShowFilters] = useState(false);
   const [showNewRequestModal, setShowNewRequestModal] = useState(false);
   const [newRequestPriority, setNewRequestPriority] = useState('Medium');
+
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editStatus, setEditStatus] = useState('Pending');
+  const [editPriority, setEditPriority] = useState('Medium');
+  const [editComments, setEditComments] = useState('');
+  const [updatingRequest, setUpdatingRequest] = useState(false);
+
+  const openEditModal = (request: any) => {
+    setActiveRequest(request);
+    setEditStatus(request.status || 'Pending');
+    setEditPriority(request.priority || 'Medium');
+    setEditComments(request.comments || '');
+    setIsEditModalOpen(true);
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   
@@ -256,6 +271,46 @@ export default function PortalRequestsPage({
     setNewMessage('');
     setAttachedFiles([]);
     setNewRequestPriority('Medium');
+  };
+
+  const handleUpdateRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeRequest) return;
+    
+    setUpdatingRequest(true);
+    try {
+      const uuid = activeRequest.uuid || activeRequest.id;
+      
+      await axios.put(`/portal-requests/${uuid}`, {
+        portal_id: portal.id,
+        priority: editPriority,
+        comments: editComments
+      });
+      
+      if (editStatus !== activeRequest.status) {
+        await axios.put(`/portal-requests/${uuid}/status`, {
+          status: editStatus,
+          reason: `Status changed to ${editStatus}`
+        });
+      }
+      
+      toast.success('Request updated successfully');
+      setIsEditModalOpen(false);
+      
+      router.reload({
+        only: ['portalRequests'],
+        onSuccess: (page) => {
+          if (page.props.portalRequests) {
+            setRequests((page.props as any).portalRequests.data);
+          }
+        }
+      });
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'Failed to update request');
+    } finally {
+      setUpdatingRequest(false);
+    }
   };
 
   const handleStatusUpdate = async (requestUuid: string, newStatus: string) => {
@@ -479,6 +534,100 @@ export default function PortalRequestsPage({
           </div>
         </div>
       )}
+
+      {/* Edit Request Modal */}
+      {isEditModalOpen && activeRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border border-sidebar-border/70 bg-white shadow-xl dark:border-sidebar-border dark:bg-gray-900">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-sidebar-border/70 bg-white p-4 dark:border-sidebar-border dark:bg-gray-900">
+              <div>
+                <h3 className="text-lg font-semibold">Edit Request</h3>
+                <p className="text-sm text-muted-foreground">Update request details and status</p>
+              </div>
+              <button onClick={() => setIsEditModalOpen(false)} className="rounded-lg p-2 hover:bg-sidebar">
+                <X className="size-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <form onSubmit={handleUpdateRequest} className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Status</label>
+                    <select
+                      value={editStatus}
+                      onChange={(e) => setEditStatus(e.target.value)}
+                      className="w-full rounded-lg border border-sidebar-border/70 bg-card p-2.5 text-sm focus:border-primary focus:outline-none dark:border-sidebar-border"
+                    >
+                      {statuses && statuses.map((s: string) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Priority</label>
+                    <div className="flex gap-2">
+                      {priorities && priorities.map((p: string) => (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => setEditPriority(p)}
+                          className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                            editPriority === p
+                              ? 'border-primary bg-primary text-white'
+                              : 'border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2">Request Details / Comments</label>
+                  <textarea
+                    className="w-full rounded-lg border border-sidebar-border/70 bg-card p-3 min-h-[150px] text-sm focus:border-primary focus:outline-none dark:border-sidebar-border"
+                    value={editComments}
+                    onChange={(e) => setEditComments(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                {activeRequest.documents && activeRequest.documents.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Current Attachments</label>
+                    <div className="space-y-2 max-h-[150px] overflow-y-auto">
+                      {activeRequest.documents.map((doc: any, index: number) => (
+                        <div key={doc.id || index} className="flex items-center justify-between rounded-lg border border-sidebar-border/70 p-2 dark:border-sidebar-border">
+                          <div className="flex items-center gap-2">
+                            <File className="size-4 text-muted-foreground" />
+                            <div className="min-w-0">
+                              <p className="text-xs font-medium truncate">{doc.original_name || doc.name}</p>
+                              <p className="text-xs text-muted-foreground">{formatFileSize(doc.size)}</p>
+                            </div>
+                          </div>
+                          <a href={doc.url} target="_blank" rel="noopener noreferrer" className="rounded p-1 text-primary hover:bg-primary/10">
+                            <Download className="size-4" />
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-sidebar-border/70">
+                  <button type="button" onClick={() => setIsEditModalOpen(false)} className="rounded-lg border border-sidebar-border/70 bg-card px-5 py-2.5 text-sm font-medium hover:bg-sidebar-accent dark:border-sidebar-border">
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={updatingRequest} className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2">
+                    {updatingRequest ? <><RefreshCw className="size-4 animate-spin" /> Updating...</> : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         {/* Header Section */}
@@ -533,9 +682,9 @@ export default function PortalRequestsPage({
         </div>
         
         {/* Main Content - WIDER layout for request list */}
-        <div className="grid auto-rows-min gap-4 lg:grid-cols-4">
-          {/* Left Column - Requests List (WIDER - 3 columns) */}
-          <div className="lg:col-span-3">
+        <div className="grid auto-rows-min gap-4 lg:grid-cols-1">
+          {/* Main Column - Requests List Full Width */}
+          <div>
             <div className="overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
               {/* Header with Add Request button */}
               <div className="border-b border-sidebar-border/70 p-4 dark:border-sidebar-border md:p-6">
@@ -719,11 +868,9 @@ export default function PortalRequestsPage({
                       {filteredRequests.map((request) => (
                         <div
                           key={request.uuid || request.id}
-                          className={`p-4 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer transition-colors ${
-                            activeRequest?.id === request.id ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''
-                          }`}
+                          className="p-4 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer transition-colors"
                           onClick={() => {
-                            setActiveRequest(request);
+                            openEditModal(request);
                           }}
                         >
                           <div className="flex items-start justify-between">
@@ -768,12 +915,12 @@ export default function PortalRequestsPage({
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setActiveRequest(request);
+                                      openEditModal(request);
                                     }}
                                     className="rounded p-1 hover:bg-sidebar text-muted-foreground hover:text-foreground"
-                                    title="View details"
+                                    title="Edit details"
                                   >
-                                    <Eye className="size-4" />
+                                    <Edit className="size-4" />
                                   </button>
                                   <button
                                     onClick={(e) => {
@@ -825,8 +972,8 @@ export default function PortalRequestsPage({
             </div>
           </div>
           
-          {/* Right Column - Request Details (Only, no form) */}
-          <div className="lg:col-span-1">
+          {/* Right Column - Request Details (Hidden) */}
+          <div className="hidden">
             {activeRequest && (
               <div className="overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                 <div className="border-b border-sidebar-border/70 p-4 dark:border-sidebar-border">
