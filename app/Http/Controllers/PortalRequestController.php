@@ -107,7 +107,7 @@ class PortalRequestController extends Controller
             }
         }
         
-        return Inertia::location(route('portal-requests.show', $portalRequest->id));
+        return redirect()->back()->with('success', 'Portal request created successfully.');
         
     }
 

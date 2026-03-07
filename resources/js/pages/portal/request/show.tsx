@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
+import axios from 'axios';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, PageProps } from '@/types';
+import type { BreadcrumbItem, SharedData } from '@/types';
+import { toast } from 'sonner';
 import {
   Globe,
   CheckCircle,
@@ -33,7 +35,7 @@ import {
   Trash2
 } from 'lucide-react';
 
-interface PortalRequestsPageProps extends PageProps {
+interface PortalRequestsPageProps {
   portalRequests: {
     data: any[];
     current_page: number;
@@ -62,7 +64,7 @@ export default function PortalRequestsPage({
   statuses,
   priorities 
 }: PortalRequestsPageProps) {
-  const { auth } = usePage<PageProps>().props;
+  const { auth } = usePage<SharedData>().props;
   
   // Get portal from the first request or use portal_id from filters
   const portal = portalRequests.data[0]?.portal || 
@@ -213,26 +215,39 @@ export default function PortalRequestsPage({
       attachedFiles.forEach((fileObj, index) => {
         formData.append(`documents[${index}]`, fileObj.file);
       });
-      console.log(formData)
 
-      router.post('/portal-requests', formData, {
-        onSuccess: () => {
-          router.reload();
-          setShowNewRequestModal(false);
-          resetNewRequestForm();
-        },
-        onError: (errors) => {
-          console.log(errors);
-          alert('Failed to submit request. Please try again.');
-        },
-        onFinish: () => {
-          setSubmitting(false);
+      axios.post('/portal-requests', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         }
+      }).then(response => {
+        toast.success('Request submitted successfully');
+        setShowNewRequestModal(false);
+        resetNewRequestForm();
+        
+        // Reload data from inertia to get latest, but with preserveState/Scroll
+        router.reload({
+          only: ['portalRequests'],
+          onSuccess: (page) => {
+             if (page.props.portalRequests) {
+               setRequests((page.props as any).portalRequests.data);
+             }
+          }
+        });
+      }).catch(error => {
+        console.error(error);
+        if (error.response?.data?.errors) {
+            toast.error('Validation error. Please check your inputs.');
+        } else {
+            toast.error('Failed to submit request. Please try again.');
+        }
+      }).finally(() => {
+        setSubmitting(false);
       });
       
     } catch (error) {
       console.error('Error submitting request:', error);
-      alert('Failed to submit request. Please try again 2.');
+      toast.error('An unexpected error occurred. Please try again.');
       setSubmitting(false);
     }
   };
