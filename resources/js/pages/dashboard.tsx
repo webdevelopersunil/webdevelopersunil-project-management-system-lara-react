@@ -423,16 +423,11 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
                 })}
               </div>
               <div className="mt-6">
-                <h4 className="mb-2 text-sm font-medium">Top Skills</h4>
+                <h4 className="mb-2 text-sm font-medium">Top Roles Overview</h4>
                 <div className="flex flex-wrap gap-2">
-                  {stats.developers.top_skills.slice(0, 5).map((skill, index) => (
-                    <span
-                      key={index}
-                      className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20"
-                    >
-                      {skill.skill} ({skill.count})
-                    </span>
-                  ))}
+                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20">
+                    Spatie RBAC Data Realized
+                  </span>
                 </div>
               </div>
             </div>
