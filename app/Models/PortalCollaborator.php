@@ -19,6 +19,7 @@ class PortalCollaborator extends Model
         'portal_id',
         'user_id',
         'status',
+        'permissions',
         'start_date',
         'end_date',
         'notes',

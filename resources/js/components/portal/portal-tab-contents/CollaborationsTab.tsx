@@ -8,6 +8,7 @@ import {
 import { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "sonner"; // Assuming you have sonner for toasts
+import { store } from "@/routes/portal/collaborators";
 
 /**
  * Types
@@ -60,17 +61,16 @@ export default function CollaborationsTab({ portal, collaborators, available_dev
     user_id: "",
   });
 
-  const handleInvite = (e: React.FormEvent) => {
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    // @ts-ignore
-    post(route("portal.collaborators.store", portal.id), {
+    post(store.url(portal.id), {
       onSuccess: () => {
-        toast.success("Collaborator added successfully");
+        toast.success("Collaborator saved successfully");
         setIsModalOpen(false);
         reset();
       },
       onError: () => {
-        toast.error("Failed to add collaborator");
+        toast.error("Failed to save collaborator");
       }
     });
   };
@@ -189,7 +189,7 @@ export default function CollaborationsTab({ portal, collaborators, available_dev
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
           >
             <Plus className="h-4 w-4" />
-            Invite New Collaborator
+            Add New Collaborator
           </button>
         </div>
       </div>
@@ -199,7 +199,7 @@ export default function CollaborationsTab({ portal, collaborators, available_dev
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
           <div className="relative w-full max-w-md rounded-xl border border-sidebar-border/70 bg-white shadow-xl dark:border-sidebar-border dark:bg-gray-900">
             <div className="flex items-center justify-between border-b border-sidebar-border/70 p-4 dark:border-sidebar-border">
-              <h3 className="text-lg font-semibold">Invite Collaborator</h3>
+              <h3 className="text-lg font-semibold">Save Collaborator</h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
                 className="rounded-lg p-2 hover:bg-sidebar text-muted-foreground hover:text-foreground"
@@ -208,7 +208,7 @@ export default function CollaborationsTab({ portal, collaborators, available_dev
               </button>
             </div>
             
-            <form onSubmit={handleInvite} className="p-6">
+            <form onSubmit={handleSave} className="p-6">
               <div className="mb-4">
                 <label className="mb-2 block text-sm font-medium">Select Developer</label>
                 <select
@@ -246,7 +246,7 @@ export default function CollaborationsTab({ portal, collaborators, available_dev
                   disabled={processing || !data.user_id}
                   className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50"
                 >
-                  {processing ? 'Inviting...' : 'Invite Collaborator'}
+                  {processing ? 'Saving...' : 'Save Collaborator'}
                 </button>
               </div>
             </form>
