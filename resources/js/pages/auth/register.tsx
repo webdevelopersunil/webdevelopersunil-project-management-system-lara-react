@@ -170,6 +170,7 @@ export default function Register() {
                             >
                                 {({ processing, errors }) => (
                                     <>
+                                        <input type="hidden" name="portal_id" value={portalId || ''} />
                                         <div className="space-y-4">
                                             {/* Full Name Field */}
                                             <div className="space-y-2">

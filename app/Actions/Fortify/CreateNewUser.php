@@ -56,11 +56,15 @@ class CreateNewUser implements CreatesNewUsers
                 // Check if portal exists
                 $portal = \App\Models\Portal::find($portal_id);
                 if ($portal) {
-                    \App\Models\PortalCollaborator::firstOrCreate([
-                        'portal_id' => $portal_id,
-                        'user_id' => $user->id,
-                        'role' => 'requestor' // or appropriate role
-                    ]);
+                    \App\Models\PortalCollaborator::firstOrCreate(
+                        ['portal_id' => $portal_id, 'user_id' => $user->id],
+                        [
+                            'status' => 'active', 
+                            'permissions' => ['read'],
+                            'start_date' => now(),
+                            'notes' => 'Registered via Email Invitation as Requestor'
+                        ]
+                    );
                 }
             } catch (\Exception $e) {
                 \Illuminate\Support\Facades\Log::error("Failed to decrypt portal_id during registration: " . $e->getMessage());
