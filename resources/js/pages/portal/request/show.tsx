@@ -89,6 +89,31 @@ export default function PortalRequestsPage({
   const [editComments, setEditComments] = useState('');
   const [updatingRequest, setUpdatingRequest] = useState(false);
 
+  // Invite Requestor Modal State
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviting, setInviting] = useState(false);
+
+  const handleInviteRequestor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail.trim()) return;
+    
+    setInviting(true);
+    try {
+      await axios.post(`/portal-requests/${portal.id}/invite-requestor`, {
+        email: inviteEmail
+      });
+      toast.success('Invitation sent successfully');
+      setShowInviteModal(false);
+      setInviteEmail('');
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'Failed to send invitation');
+    } finally {
+      setInviting(false);
+    }
+  };
+
   const openEditModal = (request: any) => {
     setActiveRequest(request);
     setEditStatus(request.status || 'Pending');
@@ -630,6 +655,48 @@ export default function PortalRequestsPage({
           </div>
         </div>
       )}
+
+      {/* Invite Requestor Modal */}
+      {showInviteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-xl border border-sidebar-border/70 bg-white shadow-xl dark:border-sidebar-border dark:bg-gray-900">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-sidebar-border/70 bg-white p-4 dark:border-sidebar-border dark:bg-gray-900">
+              <div>
+                <h3 className="text-lg font-semibold">Add A Requestor</h3>
+                <p className="text-sm text-muted-foreground">Send an invitation email with registration link</p>
+              </div>
+              <button onClick={() => setShowInviteModal(false)} className="rounded-lg p-2 hover:bg-sidebar">
+                <X className="size-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <form onSubmit={handleInviteRequestor} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Email Address *</label>
+                  <input
+                    type="email"
+                    placeholder="requestor@example.com"
+                    className="w-full rounded-lg border border-sidebar-border/70 bg-card p-3 text-sm focus:border-primary focus:outline-none dark:border-sidebar-border"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-sidebar-border/70">
+                  <button type="button" onClick={() => setShowInviteModal(false)} className="rounded-lg border border-sidebar-border/70 bg-card px-5 py-2.5 text-sm font-medium hover:bg-sidebar-accent dark:border-sidebar-border">
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={inviting || !inviteEmail.trim()} className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2">
+                    {inviting ? <><RefreshCw className="size-4 animate-spin" /> Sending...</> : <><Send className="size-4" /> Send Invite</>}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         {/* Header Section */}
@@ -674,6 +741,10 @@ export default function PortalRequestsPage({
               <button onClick={() => { window.open(portal.url, "_blank", "noopener,noreferrer"); }} className=" inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                 <Eye className="h-4 w-4" />
                 View Live
+              </button>
+              <button onClick={() => setShowInviteModal(true)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-700">
+                <User className="h-4 w-4" />
+                  Add A Requestor
               </button>
               <button onClick={() => goToEdit(portal.id)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
                 <Edit className="h-4 w-4" />

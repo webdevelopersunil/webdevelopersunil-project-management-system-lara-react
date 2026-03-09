@@ -15,9 +15,42 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia; // If using Inertia.js
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RequestorInviteMail;
 
 class PortalRequestController extends Controller
 {
+    /**
+     * Invite a user to register as a requestor for the given portal.
+     *
+     * @param Request $request
+     * @param string $uuid This represents the portal ID in this context
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function inviteRequestor(Request $request, $uuid)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $portal = Portal::findOrFail($uuid);
+
+        $encryptedPortalId = Crypt::encryptString($portal->id);
+        $registrationUrl = url('/register?portal_id=' . urlencode($encryptedPortalId));
+
+        Mail::to($request->email)->send(new RequestorInviteMail($portal->name, $registrationUrl));
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Invitation sent successfully!',
+            ]);
+        }
+
+        return back()->with('success', 'Invitation sent successfully!');
+    }
+
     /**
      * Display a listing of portal requests.
      *

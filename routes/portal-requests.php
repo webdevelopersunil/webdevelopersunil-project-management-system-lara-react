@@ -30,6 +30,9 @@ Route::middleware(['auth'])->group(function () {
         
         // Update status
         Route::put('/{uuid}/status', [PortalRequestController::class, 'updateStatus'])->name('update-status');
+
+        // Invite requestor
+        Route::post('/{uuid}/invite-requestor', [PortalRequestController::class, 'inviteRequestor'])->name('invite-requestor');
         
         // My requests
         Route::get('/my/requests', [PortalRequestController::class, 'myRequests'])->name('my-requests');

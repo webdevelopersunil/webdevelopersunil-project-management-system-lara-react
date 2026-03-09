@@ -1,6 +1,7 @@
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 import { Form, Head } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -11,6 +12,16 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
 
 export default function Register() {
+    const [portalId, setPortalId] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pid = urlParams.get('portal_id');
+        if (pid) {
+            setPortalId(pid);
+        }
+    }, []);
+
     return (
         <AuthLayout
             title="Create an account"
@@ -18,7 +29,7 @@ export default function Register() {
         >
             <Head title="Register" />
             <Form
-                {...store.form()}
+                {...store.form(portalId ? { portal_id: portalId } as any : undefined)}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
                 className="flex flex-col gap-6"
