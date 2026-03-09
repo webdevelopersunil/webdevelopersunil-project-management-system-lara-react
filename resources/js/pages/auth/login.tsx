@@ -271,26 +271,7 @@ export default function Login({
                                                 )}
                                             </Button>
 
-                                            
                                         </div>
-
-                                        {canRegister && (
-                                            <div className="text-center pt-6 border-t border-gray-200">
-                                                <p className="text-sm text-gray-600">
-                                                    New to ONGC RMS?{' '}
-                                                    <TextLink 
-                                                        href={register()} 
-                                                        className="text-blue-600 hover:text-blue-700 font-medium"
-                                                        tabIndex={5}
-                                                    >
-                                                        Request Access
-                                                    </TextLink>
-                                                </p>
-                                                <p className="text-xs text-gray-500 mt-2">
-                                                    Access requires manager approval
-                                                </p>
-                                            </div>
-                                        )}
                                     </>
                                 )}
                             </Form>

@@ -185,7 +185,12 @@ class FortifyServiceProvider extends ServiceProvider
             'status' => $request->session()->get('status'),
         ]));
 
-        Fortify::registerView(fn () => Inertia::render('auth/register'));
+        Fortify::registerView(function (Request $request) {
+            if (!$request->has('portal_id')) {
+                return redirect()->route('login')->with('status', 'Registration requires a valid invitation link.');
+            }
+            return Inertia::render('auth/register');
+        });
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));
         Fortify::confirmPasswordView(fn () => Inertia::render('auth/confirm-password'));
     }
