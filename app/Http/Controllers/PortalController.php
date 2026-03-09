@@ -107,16 +107,68 @@ class PortalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Portal $portal)
+    public function show(Portal $portal, Request $request)
     {
         $portal     =   Portal::with('owner')->findOrFail($portal->id);
         $owner      =   $portal->owner;
-        $collaborators =   PortalCollaborator::getUsersByPortalId($portal->id);
         
+        $collaborations = PortalCollaborator::with('user.roles')
+            ->where('portal_id', $portal->id)
+            ->get();
+
+        $formattedCollaborators = $collaborations->map(function ($collab) {
+            $user = $collab->user;
+            $userRole = $user->roles->first()?->name ?? 'User';
+            $avatarLetters = strtoupper(substr($user->name, 0, 2));
+            
+            return [
+                'id' => $collab->id,
+                'user' => [
+                    'id' => $user->id,
+                    'avatar' => $avatarLetters,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $userRole,
+                ],
+                'status' => $collab->status,
+                'permissions' => $collab->permissions ?? ['read'],
+                'notes' => $collab->notes,
+                'start_date' => $collab->start_date?->toIso8601String(),
+                'end_date' => $collab->end_date?->toIso8601String(),
+            ];
+        })->toArray();
+
+        // 1. Prepend Owner (has all permissions by default)
+        $ownerAvatarLetters = strtoupper(substr($owner->name, 0, 2));
+        $ownerRole = $owner->roles->first()?->name ?? 'Creator';
+        
+        array_unshift($formattedCollaborators, [
+            'id' => 'owner_' . $owner->id,
+            'user' => [
+                'id' => $owner->id,
+                'avatar' => $ownerAvatarLetters,
+                'name' => $owner->name . ' (Owner)',
+                'email' => $owner->email,
+                'role' => $ownerRole,
+            ],
+            'status' => 'active',
+            'permissions' => ['read', 'write', 'admin', 'manage', 'deploy'],
+            'notes' => 'Portal Creator',
+            'start_date' => $portal->created_at->toIso8601String(),
+            'end_date' => null,
+        ]);
+
+        // 2. Fetch available Developers (Not Owner & Not currently a collaborator)
+        $existingUserIds = $collaborations->pluck('user_id')->push($owner->id)->toArray();
+        $availableDevelopers = \App\Models\User::role('developer')
+            ->whereNotIn('id', $existingUserIds)
+            ->get(['id', 'name', 'email']);
+
         return Inertia::render('portal/show', [
-            'portal'    =>  $portal,
-            'owner'     =>  $owner,
-            'collaborators'=> $collaborators
+            'portal'               => $portal,
+            'owner'                => $owner,
+            'collaborators'        => $formattedCollaborators,
+            'available_developers' => $availableDevelopers
         ]);
     }
 
@@ -177,5 +229,40 @@ class PortalController extends Controller
         $portal->delete();
 
         return redirect()->route('portal.index')->with('success', 'Portal deleted successfully.');
+    }
+
+    /**
+     * Store a new collaborator for the portal.
+     */
+    public function storeCollaborator(Request $request, Portal $portal)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $user = \App\Models\User::findOrFail($validated['user_id']);
+
+        if (!$user->hasRole('developer')) {
+            return redirect()->back()->withErrors(['user_id' => 'Only developers can be added as collaborators.']);
+        }
+
+        // Check if already a collaborator
+        $exists = PortalCollaborator::where('portal_id', $portal->id)
+            ->where('user_id', $user->id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->withErrors(['user_id' => 'This user is already a collaborator.']);
+        }
+
+        PortalCollaborator::create([
+            'portal_id' => $portal->id,
+            'user_id' => $user->id,
+            'status' => 'active',
+            'permissions' => ['read', 'write'], // Default basic permissions
+            'start_date' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Collaborator added successfully.');
     }
 }

@@ -15,6 +15,7 @@ type props = {
   portal: any;
   owner: any;
   collaborators: any;
+  available_developers: any;
 }
 
 import { 
@@ -138,7 +139,7 @@ const goToEdit = async (id:any) => {
   router.get(`/portals/${id}/edit`);
 };
 
-export default function PortalShow( { portal, owner, collaborators } : props ) {
+export default function PortalShow( { portal, owner, collaborators, available_developers } : props ) {
   const [activeTab, setActiveTab] = useState('overview');
 
   const StatusBadge = ({ status }: { status: keyof typeof statusConfig }) => {
@@ -239,7 +240,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
             {activeTab === 'overview' && ( <Informationtab portal={portal} /> )}
 
             {/* Collaborations Stack Card */}
-            {activeTab === 'collaborations' && ( <Collaborations collaborators={collaborators} /> )}
+            {activeTab === 'collaborations' && ( <Collaborations portal={portal} collaborators={collaborators} available_developers={available_developers} /> )}
 
             {/* Settings Tab */}
             {activeTab === 'settings' && ( <SettingsTab portal={portal} /> )}

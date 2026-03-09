@@ -34,6 +34,7 @@ class PortalCollaborator extends Model
         'end_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'permissions' => 'array',
     ];
 
     /**

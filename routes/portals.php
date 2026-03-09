@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/portals/{portal}/edit', [PortalController::class, 'edit'])->name('portal.edit');
 
     Route::put('/portals/{portal}', [PortalController::class, 'update'])->name('portal.update');
-
     Route::get('/portals/{portal}', [PortalController::class, 'show'])->name('portal.show');
+
+    Route::post('/portals/{portal}/collaborators', [PortalController::class, 'storeCollaborator'])->name('portal.collaborators.store');
 });
