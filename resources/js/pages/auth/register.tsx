@@ -58,8 +58,8 @@ export default function Register() {
                         </div>
                     </div>
 
-                    <div className="flex-1 flex flex-col justify-center">
-                        <div className="max-w-md">
+                    <div className="flex-1 flex flex-col justify-center items-center">
+                        <div className="max-w-md w-full">
                             <div className="mb-10">
                                 <h2 className="text-4xl font-bold mb-4">
                                     Changes Request Management <span className="text-emerald-300">System</span>
