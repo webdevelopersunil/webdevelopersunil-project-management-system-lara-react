@@ -142,7 +142,7 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Dashboard" />
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+      <div className="container mx-auto flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         {/* Header with Quick Actions */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>

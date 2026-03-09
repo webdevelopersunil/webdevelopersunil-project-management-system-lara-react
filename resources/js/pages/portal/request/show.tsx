@@ -698,7 +698,7 @@ export default function PortalRequestsPage({
         </div>
       )}
       
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+      <div className="container mx-auto flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         {/* Header Section */}
         <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 p-6 md:p-8 dark:border-sidebar-border">
           <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 opacity-20">

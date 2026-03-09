@@ -227,7 +227,7 @@ export default function UsersIndex() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="User Management" />
       
-      <div className="flex h-full flex-1 flex-col gap-6 p-6">
+      <div className="container mx-auto flex h-full flex-1 flex-col gap-6 p-6">
         {/* Header */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>

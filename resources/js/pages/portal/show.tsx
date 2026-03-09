@@ -157,7 +157,7 @@ export default function PortalShow( { portal, owner, collaborators } : props ) {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={`${portal.name} - Portal Details`} />
       
-      <div className="flex h-full flex-1 flex-col gap-6 p-6">
+      <div className="container mx-auto flex h-full flex-1 flex-col gap-6 p-6">
         {/* Header Section */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-8 dark:from-primary/20">
           
