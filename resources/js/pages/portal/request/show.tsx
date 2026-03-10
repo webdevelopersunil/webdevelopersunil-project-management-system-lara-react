@@ -985,16 +985,26 @@ export default function PortalRequestsPage({
                                 </div>
                                 
                                 <div className="flex items-center gap-1">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openEditModal(request);
-                                    }}
-                                    className="rounded p-1 hover:bg-sidebar text-muted-foreground hover:text-foreground"
-                                    title="Edit details"
-                                  >
-                                    <Edit className="size-4" />
-                                  </button>
+                                  {auth.user?.id === request.submitted_by ? (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        openEditModal(request);
+                                      }}
+                                      className="rounded p-1 hover:bg-sidebar text-muted-foreground hover:text-foreground"
+                                      title="Edit details"
+                                    >
+                                      <Edit className="size-4" />
+                                    </button>
+                                  ) : (
+                                    <button
+                                      disabled
+                                      className="rounded p-1 opacity-40 cursor-not-allowed text-muted-foreground"
+                                      title="Edit details (Not Owner)"
+                                    >
+                                      <Edit className="size-4" />
+                                    </button>
+                                  )}
                                   
                                   {request.documents && request.documents.length > 0 ? (
                                     <>
