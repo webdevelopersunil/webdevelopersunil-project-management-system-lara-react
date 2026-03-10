@@ -85,6 +85,14 @@ class PortalRequest extends Model
     }
 
     /**
+     * Get all collaborator lists (messages) associated with the request.
+     */
+    public function messages()
+    {
+        return $this->hasMany(PortalCollaboratorList::class);
+    }
+
+    /**
      * Scope for pending requests.
      */
     public function scopePending($query)

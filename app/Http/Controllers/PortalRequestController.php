@@ -213,6 +213,59 @@ class PortalRequestController extends Controller
 
 
 
+    public function messages($uuid)
+    {
+        $portalRequest = PortalRequest::with([
+            'portal',
+            'submitter',
+            'reviewer',
+            'documents',
+            'messages.submitter',
+            'messages.document'
+        ])->where('request_uuid', $uuid)->firstOrFail();
+        
+        if (class_exists(Inertia::class)) {
+            return Inertia::render('portal/request/messages', [
+                'portalRequest' => $portalRequest,
+            ]);
+        }
+        
+        return response()->json([
+            'portalRequest' => $portalRequest,
+        ]);
+    }
+
+    public function storeMessage(Request $request, $uuid)
+    {
+        $validated = $request->validate([
+            'text' => 'required|string',
+            'document' => 'nullable|file|max:10240',
+        ]);
+
+        $portalRequest = PortalRequest::where('request_uuid', $uuid)->firstOrFail();
+
+        $documentId = null;
+        if ($request->hasFile('document')) {
+            $document = $this->uploadDocument($portalRequest, $request->file('document'));
+            $documentId = $document->id;
+        }
+
+        $portalRequest->messages()->create([
+            'text' => $validated['text'],
+            'document_id' => $documentId,
+            'submitted_by' => Auth::id(),
+        ]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Message added successfully',
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Message added successfully.');
+    }
+
     public function show_old($uuid)
     {
         $portalRequest = PortalRequest::with([

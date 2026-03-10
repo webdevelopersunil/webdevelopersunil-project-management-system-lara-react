@@ -943,7 +943,7 @@ export default function PortalRequestsPage({
                           key={request.request_uuid || request.id}
                           className="p-4 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer transition-colors"
                           onClick={() => {
-                            openEditModal(request);
+                            router.get(`/portal-requests/${request.request_uuid || request.id}/messages`);
                           }}
                         >
                           <div className="flex items-start justify-between">

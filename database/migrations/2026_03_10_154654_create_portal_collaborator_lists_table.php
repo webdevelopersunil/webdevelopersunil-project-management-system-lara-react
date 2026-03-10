@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('portal_collaborator_lists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('portal_collaborator_id')->constrained('portal_collaborators')->cascadeOnDelete();
+            $table->foreignId('portal_request_id')->constrained('portal_requests')->cascadeOnDelete();
             $table->text('text');
-            $table->foreignId('document_id')->constrained('portal_request_documents')->cascadeOnDelete();
+            $table->foreignId('document_id')->nullable()->constrained('portal_request_documents')->cascadeOnDelete();
             $table->foreignId('submitted_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();

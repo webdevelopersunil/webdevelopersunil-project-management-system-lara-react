@@ -19,8 +19,11 @@ Route::middleware(['auth'])->group(function () {
         // Store new request
         Route::post('/', [PortalRequestController::class, 'store'])->name('store');
         
-        // Show single request
-        // Route::get('/{uuid}', [PortalRequestController::class, 'show']);
+        // Show single request messages
+        Route::get('/{uuid}/messages', [PortalRequestController::class, 'messages'])->name('messages');
+        
+        // Store message
+        Route::post('/{uuid}/messages', [PortalRequestController::class, 'storeMessage'])->name('messages.store');
         
         // Edit page
         Route::get('/{uuid}/edit', [PortalRequestController::class, 'edit'])->name('edit');
