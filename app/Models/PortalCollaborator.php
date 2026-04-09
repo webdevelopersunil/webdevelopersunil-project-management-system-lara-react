@@ -22,6 +22,7 @@ class PortalCollaborator extends Model
         'permissions',
         'start_date',
         'end_date',
+        'type',
         'notes',
     ];
 
@@ -36,6 +37,7 @@ class PortalCollaborator extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'permissions' => 'array',
+        'type' => 'string',
     ];
 
     /**

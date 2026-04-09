@@ -63,7 +63,7 @@ class CreateNewUser implements CreatesNewUsers
                             'status' => 'active', 
                             'permissions' => ['read'],
                             'start_date' => now(),
-                            // 'type' => 'Requestor',
+                            'type' => 'Requestor',
                             'notes' => 'Registered via Email Invitation as Requestor'
                         ]
                     );
