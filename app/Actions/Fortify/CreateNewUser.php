@@ -18,6 +18,7 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'username' => [
@@ -34,7 +35,7 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
-            'portal_id' => ['nullable', 'string'],
+            'portal_id' => ['required', 'string'],
         ])->validate();
 
         $user = User::create([
@@ -62,6 +63,7 @@ class CreateNewUser implements CreatesNewUsers
                             'status' => 'active', 
                             'permissions' => ['read'],
                             'start_date' => now(),
+                            // 'type' => 'Requestor',
                             'notes' => 'Registered via Email Invitation as Requestor'
                         ]
                     );

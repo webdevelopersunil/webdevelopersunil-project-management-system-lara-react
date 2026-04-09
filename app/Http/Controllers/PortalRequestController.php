@@ -59,7 +59,15 @@ class PortalRequestController extends Controller
      */
     public function index(Request $request){
         
-        $query = Portal::where('owner_id', $request->user()->id);
+        // $query = Portal::where('owner_id', $request->user()->id);
+
+        if ($request->user()->hasRole('requestor')) {
+            $query = Portal::whereHas('collaborators', function ($q) use ($request) {
+                $q->where('user_id', $request->user()->id);
+            });
+        } else {
+            $query = Portal::where('owner_id', $request->user()->id);
+        }
         
         // Apply search filter
         if ($request->has('search') && !empty($request->search)) {

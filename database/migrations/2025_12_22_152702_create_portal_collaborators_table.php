@@ -26,7 +26,7 @@ return new class extends Migration
             
             // Status of collaboration
             $table->enum('status', ['active', 'inactive', 'pending', 'revoked'])->default('active');
-            
+            $table->enum('type',['Requestor','Developer'])->default('Developer');
             // Collaboration details
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
