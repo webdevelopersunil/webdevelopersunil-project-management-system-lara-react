@@ -42,7 +42,7 @@ class CreateNewUser implements CreatesNewUsers
             'username' => strtoupper($input['username']), // Saving uppercase as seen in LDAP setup
             'email' => $input['email'],
             'password' => $input['password'],
-        ]);
+        ])->assignRole('requestor');
 
         if (!empty($input['portal_id'])) {
             try {

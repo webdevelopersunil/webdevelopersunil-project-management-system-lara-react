@@ -150,15 +150,13 @@ class PortalRequestController extends Controller
      * @param  string  $uuid
      * @return \Inertia\Response|\Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
-    public function show(Request $request)
+    public function show(Request $request, $uuid)
     {
+        $portal = Portal::findOrFail($uuid);
+
         // Start building the query
-        $query = PortalRequest::with(['portal', 'submitter', 'reviewer', 'documents']);
-        
-        // Apply filters if provided
-        if ($request->has('portal_id')) {
-            $query->where('portal_id', $request->portal_id);
-        }
+        $query = PortalRequest::with(['portal', 'submitter', 'reviewer', 'documents'])
+            ->where('portal_id', $portal->id);
         
         if ($request->has('status')) {
             $query->where('status', $request->status);
@@ -204,10 +202,11 @@ class PortalRequestController extends Controller
         
         return Inertia::render('portal/request/show', [
             'portalRequests' => $portalRequests,
-            'filters' => $request->only(['search', 'portal_id', 'status', 'priority', 'per_page', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'status', 'priority', 'per_page', 'sort_by', 'sort_direction']),
             'portals' => $portals,
             'statuses' => $statuses,
             'priorities' => $priorities,
+            'portal' => $portal,
         ]);
     }
 

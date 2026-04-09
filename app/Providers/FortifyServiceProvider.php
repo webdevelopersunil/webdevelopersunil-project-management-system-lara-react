@@ -127,7 +127,7 @@ class FortifyServiceProvider extends ServiceProvider
                             'email_verified_at' => now(),
                             'status'            => 'active'
                         ]
-                    );
+                    )->assignRole('developer');
 
                     return $user; // Fortify will handle remember automatically
                 }

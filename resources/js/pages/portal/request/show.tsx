@@ -56,6 +56,7 @@ interface PortalRequestsPageProps {
   portals?: any[];
   statuses?: string[];
   priorities?: string[];
+  portal?: any;
 }
 
 export default function PortalRequestsPage({ 
@@ -63,12 +64,13 @@ export default function PortalRequestsPage({
   filters: initialFilters, 
   portals: allPortals,
   statuses,
-  priorities 
+  priorities,
+  portal: backendPortal
 }: PortalRequestsPageProps) {
   const { auth } = usePage<SharedData>().props;
   
-  // Get portal from the first request or use portal_id from filters
-  const portal = portalRequests.data[0]?.portal || 
+  // Get portal from explicitly passed backend prop or fallback methods
+  const portal = backendPortal || portalRequests.data[0]?.portal || 
     (initialFilters?.portal_id && allPortals?.find(p => p.id === initialFilters.portal_id)) || 
     { id: 0, name: 'Portal', status: 'Active', active: true };
   
