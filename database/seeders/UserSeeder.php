@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin',
-                'username' => 'A004628',
+                'username' => 'A004620',
                 'password' => Hash::make('welcome@123'),
                 'email_verified_at' => now(),
             ]
@@ -50,17 +50,17 @@ class UserSeeder extends Seeder
         | 3. Developer
         |--------------------------------------------------------------------------
         */
-        $developer = User::firstOrCreate(
-            ['email' => 'dev@gmail.com'],
-            [
-                'name' => 'Developer User',
-                'username' => '110012',
-                'password' => Hash::make('welcome@123'),
-                'email_verified_at' => now(),
-            ]
-        );
+        // $developer = User::firstOrCreate(
+        //     ['email' => 'dev@gmail.com'],
+        //     [
+        //         'name' => 'Developer User',
+        //         'username' => '110012',
+        //         'password' => Hash::make('welcome@123'),
+        //         'email_verified_at' => now(),
+        //     ]
+        // );
 
-        $developer->assignRole('developer');
+        // $developer->assignRole('developer');
 
         /*
         |--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ class UserSeeder extends Seeder
             ['email' => 'pm@gmail.com'],
             [
                 'name' => 'Project Manager User',
-                'username' => '110013',
+                'username' => 'A004621',
                 'password' => Hash::make('welcome@123'),
                 'email_verified_at' => now(),
             ]
@@ -84,17 +84,17 @@ class UserSeeder extends Seeder
         | 5. Requestor
         |--------------------------------------------------------------------------
         */
-        $requestor = User::firstOrCreate(
-            ['email' => 'req@gmail.com'],
-            [
-                'name' => 'Requestor User',
-                'username' => '110014',
-                'password' => Hash::make('welcome@123'),
-                'email_verified_at' => now(),
-            ]
-        );
+        // $requestor = User::firstOrCreate(
+        //     ['email' => 'req@gmail.com'],
+        //     [
+        //         'name' => 'Requestor User',
+        //         'username' => '110014',
+        //         'password' => Hash::make('welcome@123'),
+        //         'email_verified_at' => now(),
+        //     ]
+        // );
 
-        $requestor->assignRole('requestor');
+        // $requestor->assignRole('requestor');
 
     }
 }

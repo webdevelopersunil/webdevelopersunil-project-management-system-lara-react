@@ -33,9 +33,9 @@ const mainNavItems: NavItem[] = [
         icon: Users,
     },
     {
-        title:  'Portal Requests',
-        href:   '/portal-requests/',
-        icon:   GitPullRequestCreateArrow,
+        title: 'Portal Requests',
+        href: '/portal-requests/',
+        icon: GitPullRequestCreateArrow,
     }
 ];
 
@@ -50,7 +50,7 @@ const footerNavItems: NavItem[] = [
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const isRequestor = auth.user.roles?.includes('requestor');
-    
+
     // Filter out "Dashboard" and "Users" for requestors
     const filteredNavItems = mainNavItems.filter(item => {
         if (isRequestor) {
