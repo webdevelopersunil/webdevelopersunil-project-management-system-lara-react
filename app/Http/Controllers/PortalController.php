@@ -18,7 +18,10 @@ class PortalController extends Controller
             $query = Portal::whereHas('collaborators', function ($q) use ($request) {
                 $q->where('user_id', $request->user()->id);
             });
-        } else {
+        } else if($request->user()->hasRole('admin')){
+            
+            $query = new Portal;
+        }else{
             $query = Portal::where('owner_id', $request->user()->id);
         }
          
