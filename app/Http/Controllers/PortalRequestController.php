@@ -162,6 +162,8 @@ class PortalRequestController extends Controller
     {
         $portal = Portal::findOrFail($uuid);
 
+        $role = Auth::user()->getRoleNames()[0];
+
         // Start building the query
         $query = PortalRequest::with(['portal', 'submitter', 'reviewer', 'documents'])
             ->where('portal_id', $portal->id);
@@ -215,6 +217,7 @@ class PortalRequestController extends Controller
             'statuses' => $statuses,
             'priorities' => $priorities,
             'portal' => $portal,
+            'user_role'  => $role
         ]);
     }
 

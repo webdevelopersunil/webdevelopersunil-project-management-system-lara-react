@@ -57,23 +57,25 @@ interface PortalRequestsPageProps {
   statuses?: string[];
   priorities?: string[];
   portal?: any;
+  user_role?: string;
 }
 
-export default function PortalRequestsPage({ 
-  portalRequests, 
-  filters: initialFilters, 
+export default function PortalRequestsPage({
+  portalRequests,
+  filters: initialFilters,
   portals: allPortals,
   statuses,
   priorities,
-  portal: backendPortal
+  portal: backendPortal,
+  user_role: userRole,
 }: PortalRequestsPageProps) {
   const { auth } = usePage<SharedData>().props;
-  
+
   // Get portal from explicitly passed backend prop or fallback methods
-  const portal = backendPortal || portalRequests.data[0]?.portal || 
-    (initialFilters?.portal_id && allPortals?.find(p => p.id === initialFilters.portal_id)) || 
+  const portal = backendPortal || portalRequests.data[0]?.portal ||
+    (initialFilters?.portal_id && allPortals?.find(p => p.id === initialFilters.portal_id)) ||
     { id: 0, name: 'Portal', status: 'Active', active: true };
-  
+
   const [requests, setRequests] = useState<any[]>(portalRequests.data || []);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -99,7 +101,7 @@ export default function PortalRequestsPage({
   const handleInviteRequestor = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail.trim()) return;
-    
+
     setInviting(true);
     try {
       await axios.post(`/portal-requests/${portal.id}/invite-requestor`, {
@@ -125,7 +127,7 @@ export default function PortalRequestsPage({
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
-  
+
   const [filters, setFilters] = useState({
     search: initialFilters?.search || '',
     status: initialFilters?.status || '',
@@ -133,7 +135,7 @@ export default function PortalRequestsPage({
     sort_by: initialFilters?.sort_by || 'created_at',
     sort_direction: initialFilters?.sort_direction || 'desc'
   });
-  
+
   // Calculate statistics from requests
   const statistics = {
     total_requests: portalRequests.total || 0,
@@ -183,35 +185,35 @@ export default function PortalRequestsPage({
 
   const applyFilters = () => {
     let filtered = [...requests];
-    
+
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filtered = filtered.filter(request => 
+      filtered = filtered.filter(request =>
         (request.comments?.toLowerCase().includes(searchTerm) || '') ||
         (request.reason?.toLowerCase().includes(searchTerm) || '') ||
         (request.submitter?.name?.toLowerCase().includes(searchTerm) || '')
       );
     }
-    
+
     if (filters.status) {
       filtered = filtered.filter(request => request.status === filters.status);
     }
-    
+
     if (filters.priority) {
       filtered = filtered.filter(request => request.priority === filters.priority);
     }
-    
+
     filtered.sort((a, b) => {
       const aVal = a[filters.sort_by];
       const bVal = b[filters.sort_by];
-      
+
       if (filters.sort_direction === 'asc') {
         return aVal > bVal ? 1 : -1;
       } else {
         return aVal < bVal ? 1 : -1;
       }
     });
-    
+
     return filtered;
   };
 
@@ -220,17 +222,17 @@ export default function PortalRequestsPage({
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    
+
     const fileArray = Array.from(files);
     const validFiles = fileArray.filter(file => file.size <= 10 * 1024 * 1024);
-    
+
     setAttachedFiles(prev => [...prev, ...validFiles.map(file => ({
       id: Date.now() + Math.random(),
       file,
       name: file.name,
       size: file.size
     }))]);
-    
+
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -242,14 +244,14 @@ export default function PortalRequestsPage({
 
   const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!newMessage.trim()) {
       alert('Please enter a message');
       return;
     }
-    
+
     setSubmitting(true);
-    
+
     try {
       const formData = new FormData();
       formData.append('portal_id', portal.id.toString());
@@ -267,27 +269,27 @@ export default function PortalRequestsPage({
         toast.success('Request submitted successfully');
         setShowNewRequestModal(false);
         resetNewRequestForm();
-        
+
         // Reload data from inertia to get latest, but with preserveState/Scroll
         router.reload({
           only: ['portalRequests'],
           onSuccess: (page) => {
-             if (page.props.portalRequests) {
-               setRequests((page.props as any).portalRequests.data);
-             }
+            if (page.props.portalRequests) {
+              setRequests((page.props as any).portalRequests.data);
+            }
           }
         });
       }).catch(error => {
         console.error(error);
         if (error.response?.data?.errors) {
-            toast.error('Validation error. Please check your inputs.');
+          toast.error('Validation error. Please check your inputs.');
         } else {
-            toast.error('Failed to submit request. Please try again.');
+          toast.error('Failed to submit request. Please try again.');
         }
       }).finally(() => {
         setSubmitting(false);
       });
-      
+
     } catch (error) {
       console.error('Error submitting request:', error);
       toast.error('An unexpected error occurred. Please try again.');
@@ -304,28 +306,28 @@ export default function PortalRequestsPage({
   const handleUpdateRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeRequest) return;
-    
+
     setUpdatingRequest(true);
     try {
       // The backend uses request_uuid for its lookups on update/edit endpoints
       const uuid = activeRequest.request_uuid || activeRequest.uuid || activeRequest.id;
-      
+
       await axios.put(`/portal-requests/${uuid}`, {
         portal_id: portal.id,
         priority: editPriority,
         comments: editComments
       });
-      
+
       if (editStatus !== activeRequest.status) {
         await axios.put(`/portal-requests/${uuid}/status`, {
           status: editStatus,
           reason: `Status changed to ${editStatus}`
         });
       }
-      
+
       toast.success('Request updated successfully');
       setIsEditModalOpen(false);
-      
+
       router.reload({
         only: ['portalRequests'],
         onSuccess: (page) => {
@@ -352,7 +354,7 @@ export default function PortalRequestsPage({
           router.reload();
         }
       });
-      
+
     } catch (error) {
       console.error('Error updating status:', error);
       alert('Failed to update status. Please try again.');
@@ -399,18 +401,18 @@ export default function PortalRequestsPage({
     });
   };
 
-  const goToEdit = async (id:any) => {
+  const goToEdit = async (id: any) => {
     router.get(`/portals/${id}/edit`);
   };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={`${portal.name} - Requests`} />
-      
+
       {/* New Request Modal */}
       {showNewRequestModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div 
+          <div
             ref={modalRef}
             className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border border-sidebar-border/70 bg-white shadow-xl dark:border-sidebar-border dark:bg-gray-900"
           >
@@ -430,7 +432,7 @@ export default function PortalRequestsPage({
                 <X className="size-5" />
               </button>
             </div>
-            
+
             {/* Modal Body */}
             <div className="p-6">
               <form onSubmit={handleSubmitRequest} className="space-y-6">
@@ -442,18 +444,17 @@ export default function PortalRequestsPage({
                         key={priority}
                         type="button"
                         onClick={() => setNewRequestPriority(priority)}
-                        className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${
-                          newRequestPriority === priority
-                            ? 'border-primary bg-primary text-white'
-                            : 'border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
-                        }`}
+                        className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${newRequestPriority === priority
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
+                          }`}
                       >
                         {priority}
                       </button>
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">Request Details *</label>
                   <textarea
@@ -467,7 +468,7 @@ export default function PortalRequestsPage({
                     Be specific about what you need from the portal team
                   </p>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">Attachments</label>
                   <div className="space-y-4">
@@ -487,7 +488,7 @@ export default function PortalRequestsPage({
                         Maximum file size: 10MB. Supported: images, documents, PDFs
                       </p>
                     </div>
-                    
+
                     {attachedFiles.length > 0 && (
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
@@ -528,7 +529,7 @@ export default function PortalRequestsPage({
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-end gap-3 pt-4">
                   <button
                     type="button"
@@ -577,7 +578,7 @@ export default function PortalRequestsPage({
                 <X className="size-5" />
               </button>
             </div>
-            
+
             <div className="p-6">
               <form onSubmit={handleUpdateRequest} className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
@@ -599,11 +600,10 @@ export default function PortalRequestsPage({
                           key={p}
                           type="button"
                           onClick={() => setEditPriority(p)}
-                          className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                            editPriority === p
-                              ? 'border-primary bg-primary text-white'
-                              : 'border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
-                          }`}
+                          className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${editPriority === p
+                            ? 'border-primary bg-primary text-white'
+                            : 'border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
+                            }`}
                         >
                           {p}
                         </button>
@@ -611,7 +611,7 @@ export default function PortalRequestsPage({
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">Request Details / Comments</label>
                   <textarea
@@ -621,7 +621,7 @@ export default function PortalRequestsPage({
                     required
                   />
                 </div>
-                
+
                 {activeRequest.documents && activeRequest.documents.length > 0 && (
                   <div>
                     <label className="block text-sm font-medium mb-2">Current Attachments</label>
@@ -643,7 +643,7 @@ export default function PortalRequestsPage({
                     </div>
                   </div>
                 )}
-                
+
                 <div className="flex items-center justify-end gap-3 pt-4 border-t border-sidebar-border/70">
                   <button type="button" onClick={() => setIsEditModalOpen(false)} className="rounded-lg border border-sidebar-border/70 bg-card px-5 py-2.5 text-sm font-medium hover:bg-sidebar-accent dark:border-sidebar-border">
                     Cancel
@@ -671,7 +671,7 @@ export default function PortalRequestsPage({
                 <X className="size-5" />
               </button>
             </div>
-            
+
             <div className="p-6">
               <form onSubmit={handleInviteRequestor} className="space-y-6">
                 <div>
@@ -685,7 +685,7 @@ export default function PortalRequestsPage({
                     required
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-end gap-3 pt-4 border-t border-sidebar-border/70">
                   <button type="button" onClick={() => setShowInviteModal(false)} className="rounded-lg border border-sidebar-border/70 bg-card px-5 py-2.5 text-sm font-medium hover:bg-sidebar-accent dark:border-sidebar-border">
                     Cancel
@@ -699,14 +699,14 @@ export default function PortalRequestsPage({
           </div>
         </div>
       )}
-      
+
       <div className="container mx-auto flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         {/* Header Section */}
         <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 p-6 md:p-8 dark:border-sidebar-border">
           <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 opacity-20">
             <div className="size-full rounded-full bg-primary/10"></div>
           </div>
-          
+
           <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
@@ -733,29 +733,33 @@ export default function PortalRequestsPage({
                   </div>
                 </div>
               </div>
-              
+
               <p className="max-w-2xl text-sm text-gray-600 md:text-base dark:text-gray-400">
                 Manage requests and communications for this portal
               </p>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <button onClick={() => { window.open(portal.url, "_blank", "noopener,noreferrer"); }} className=" inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                 <Eye className="h-4 w-4" />
                 View Live
               </button>
-              <button onClick={() => setShowInviteModal(true)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-700">
-                <User className="h-4 w-4" />
-                  Add A Requestor
-              </button>
-              <button onClick={() => goToEdit(portal.id)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
-                <Edit className="h-4 w-4" />
-                  Edit Portal
-              </button>
+              {userRole !== 'requestor' && (
+                <>
+                  <button onClick={() => setShowInviteModal(true)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-700">
+                    <User className="h-4 w-4" />
+                    Add A Requestor
+                  </button>
+                  <button onClick={() => goToEdit(portal.id)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90">
+                    <Edit className="h-4 w-4" />
+                    Edit Portal
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
-        
+
         {/* Main Content - WIDER layout for request list */}
         <div className="grid auto-rows-min gap-4 lg:grid-cols-1">
           {/* Main Column - Requests List Full Width */}
@@ -765,15 +769,15 @@ export default function PortalRequestsPage({
               <div className="border-b border-sidebar-border/70 p-4 dark:border-sidebar-border md:p-6">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold">Portal Requests</h2>
+                    <h2 className="text-lg font-semibold">Portal Requests {userRole}</h2>
                     <p className="text-sm text-muted-foreground">
                       {statistics.total_requests} total • {statistics.pending_requests} pending
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     {/* Filter Toggle Button */}
-                    <button 
+                    <button
                       onClick={() => setShowFilters(!showFilters)}
                       className="inline-flex items-center gap-2 rounded-lg border border-sidebar-border/70 bg-card px-3 py-2 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border"
                     >
@@ -781,9 +785,9 @@ export default function PortalRequestsPage({
                       Filters
                       {showFilters ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
                     </button>
-                    
+
                     {/* Add Request Button - Opens Modal */}
-                    <button 
+                    <button
                       onClick={() => setShowNewRequestModal(true)}
                       className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
                     >
@@ -792,7 +796,7 @@ export default function PortalRequestsPage({
                     </button>
                   </div>
                 </div>
-                
+
                 {/* Search Bar - Always visible */}
                 <div className="relative mt-4">
                   <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -804,7 +808,7 @@ export default function PortalRequestsPage({
                     onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                   />
                 </div>
-                
+
                 {/* Advanced Filters Panel */}
                 {showFilters && (
                   <div className="mt-4 space-y-4 rounded-lg border border-sidebar-border/70 bg-sidebar p-4 dark:border-sidebar-border">
@@ -816,18 +820,17 @@ export default function PortalRequestsPage({
                             <button
                               key={status}
                               onClick={() => setFilters({ ...filters, status: status === 'All' ? '' : status })}
-                              className={`rounded-full px-3 py-1.5 text-xs font-medium ${
-                                filters.status === status
-                                  ? 'bg-primary text-white'
-                                  : 'border border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
-                              }`}
+                              className={`rounded-full px-3 py-1.5 text-xs font-medium ${filters.status === status
+                                ? 'bg-primary text-white'
+                                : 'border border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
+                                }`}
                             >
                               {status}
                             </button>
                           ))}
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <label className="text-xs font-medium">Priority</label>
                         <div className="flex flex-wrap gap-2">
@@ -835,18 +838,17 @@ export default function PortalRequestsPage({
                             <button
                               key={priority}
                               onClick={() => setFilters({ ...filters, priority: priority === 'All' ? '' : priority })}
-                              className={`rounded-full px-3 py-1.5 text-xs font-medium ${
-                                filters.priority === priority
-                                  ? 'bg-primary text-white'
-                                  : 'border border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
-                              }`}
+                              className={`rounded-full px-3 py-1.5 text-xs font-medium ${filters.priority === priority
+                                ? 'bg-primary text-white'
+                                : 'border border-sidebar-border/70 bg-card hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border'
+                                }`}
                             >
                               {priority}
                             </button>
                           ))}
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <label className="text-xs font-medium">Sort By</label>
                         <div className="flex gap-2">
@@ -868,7 +870,7 @@ export default function PortalRequestsPage({
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between pt-2">
                       <button
                         onClick={() => {
@@ -885,7 +887,7 @@ export default function PortalRequestsPage({
                         <X className="size-3" />
                         Clear all filters
                       </button>
-                      
+
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground">
                           {filteredRequests.length} requests found
@@ -901,7 +903,7 @@ export default function PortalRequestsPage({
                   </div>
                 )}
               </div>
-              
+
               {/* Requests List */}
               <div className="p-0">
                 <div className="h-[500px] overflow-y-auto md:h-[600px]">
@@ -961,11 +963,11 @@ export default function PortalRequestsPage({
                                   {formatDate(request.created_at)}
                                 </span>
                               </div>
-                              
+
                               <p className="text-sm font-medium mb-2 line-clamp-2">
                                 {request.comments?.split('\n')[0] || 'No comment'}
                               </p>
-                              
+
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                   <span className="flex items-center gap-1">
@@ -985,7 +987,7 @@ export default function PortalRequestsPage({
                                     </span>
                                   )}
                                 </div>
-                                
+
                                 <div className="flex items-center gap-1">
                                   {auth.user?.id === request.submitted_by ? (
                                     <button
@@ -1007,7 +1009,7 @@ export default function PortalRequestsPage({
                                       <Edit className="size-4" />
                                     </button>
                                   )}
-                                  
+
                                   {request.documents && request.documents.length > 0 ? (
                                     <>
                                       <a
@@ -1061,7 +1063,7 @@ export default function PortalRequestsPage({
                   )}
                 </div>
               </div>
-              
+
               {/* Bottom bar with statistics and refresh */}
               <div className="border-t border-sidebar-border/70 p-4 dark:border-sidebar-border">
                 <div className="flex items-center justify-between">
@@ -1078,7 +1080,7 @@ export default function PortalRequestsPage({
                       </div>
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={() => router.reload()}
                     className="inline-flex items-center gap-2 rounded-lg border border-sidebar-border/70 bg-card px-3 py-1.5 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:border-sidebar-border"
@@ -1090,7 +1092,7 @@ export default function PortalRequestsPage({
               </div>
             </div>
           </div>
-          
+
           {/* Right Column - Request Details (Hidden) */}
           <div className="hidden">
             {activeRequest && (
@@ -1109,7 +1111,7 @@ export default function PortalRequestsPage({
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="p-4">
                   <div className="space-y-4">
                     <div>
@@ -1121,7 +1123,7 @@ export default function PortalRequestsPage({
                           {activeRequest.status}
                         </span>
                       </div>
-                      
+
                       <div className="mb-4">
                         <p className="text-sm font-medium mb-1">Submitted by</p>
                         <div className="flex items-center gap-2">
@@ -1136,14 +1138,14 @@ export default function PortalRequestsPage({
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="mb-4">
                         <p className="text-sm font-medium mb-2">Comments</p>
                         <div className="rounded-lg bg-sidebar p-3">
                           <p className="text-sm whitespace-pre-wrap">{activeRequest.comments}</p>
                         </div>
                       </div>
-                      
+
                       {activeRequest.reason && (
                         <div className="mb-4">
                           <p className="text-sm font-medium mb-2">Status Update</p>
@@ -1157,7 +1159,7 @@ export default function PortalRequestsPage({
                           </div>
                         </div>
                       )}
-                      
+
                       {activeRequest.documents && activeRequest.documents.length > 0 && (
                         <div>
                           <p className="text-sm font-medium mb-2">Attachments ({activeRequest.documents.length})</p>
@@ -1188,7 +1190,7 @@ export default function PortalRequestsPage({
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="space-y-3">
                       <div>
                         <label className="block text-xs font-medium mb-1">Update Status</label>
@@ -1205,7 +1207,7 @@ export default function PortalRequestsPage({
                           <option value="Completed">Completed</option>
                         </select>
                       </div>
-                      
+
                       <button
                         onClick={() => setShowNewRequestModal(true)}
                         className="w-full rounded-lg bg-primary py-2 text-sm font-medium text-white hover:bg-primary/90"
@@ -1218,7 +1220,7 @@ export default function PortalRequestsPage({
                 </div>
               </div>
             )}
-            
+
             {/* Empty state for right column */}
             {!activeRequest && (
               <div className="overflow-hidden rounded-xl border border-sidebar-border/70 p-6 text-center dark:border-sidebar-border">
