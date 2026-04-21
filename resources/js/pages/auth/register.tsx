@@ -330,6 +330,19 @@ export default function Register() {
                                                     Log in
                                                 </TextLink>
                                             </p>
+                                            {portalId && (
+                                                <p className="text-sm text-gray-600 mt-2">
+                                                    Or{' '}
+                                                    <TextLink
+                                                        href={`/login?portal_id=${portalId}`}
+                                                        className="text-emerald-600 hover:text-emerald-700 font-medium"
+                                                        tabIndex={8}
+                                                    >
+                                                        Log in with ONGC Corporate LDAP
+                                                    </TextLink>
+                                                    {' '}to register as requestor
+                                                </p>
+                                            )}
                                         </div>
                                     </>
                                 )}

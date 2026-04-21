@@ -122,6 +122,8 @@ class FortifyServiceProvider extends ServiceProvider
 
                 if ($record && $connection->auth()->attempt($record['dn'], $password)) {
                     // Find or create user
+
+                    
                     $user = User::updateOrCreate(
                         ['username' => $username],
                         [
@@ -132,7 +134,38 @@ class FortifyServiceProvider extends ServiceProvider
                             'email_verified_at' => now(),
                             'status'            => 'active'
                         ]
-                    )->assignRole('developer');
+                    );
+
+                    if ($request->filled('portal_id')) {
+                        try {
+                            $portal_id = \Illuminate\Support\Facades\Crypt::decryptString($request->portal_id);
+                            
+                            if (!$user->hasRole('requestor')) {
+                                $user->assignRole('requestor');
+                            }
+                            
+                            $portal = \App\Models\Portal::find($portal_id);
+                            if ($portal) {
+                                \App\Models\PortalCollaborator::firstOrCreate(
+                                    ['portal_id' => $portal_id, 'user_id' => $user->id],
+                                    [
+                                        'status' => 'active', 
+                                        'permissions' => ['read'],
+                                        'start_date' => now(),
+                                        'type' => 'Requestor',
+                                        'notes' => 'Registered via Email Invitation as Requestor'
+                                    ]
+                                );
+                            }
+                        } catch (\Exception $e) {
+                            Log::error("Failed to decrypt portal_id during LDAP login: " . $e->getMessage());
+                            $user->assignRole('requestor');
+                        }
+                    } else {
+                        if (!$user->hasRole('developer') && !$user->hasRole('admin')) {
+                            $user->assignRole('developer');
+                        }
+                    }
 
                     return $user; // Fortify will handle remember automatically
                 }

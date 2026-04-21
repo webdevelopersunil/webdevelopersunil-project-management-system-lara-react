@@ -23,7 +23,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface LoginProps {
     status?: string;
@@ -37,6 +37,15 @@ export default function Login({
     canRegister,
 }: LoginProps) {
     const [showPassword, setShowPassword] = useState(false);
+    const [portalId, setPortalId] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pid = urlParams.get('portal_id');
+        if (pid) {
+            setPortalId(pid);
+        }
+    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
@@ -167,12 +176,13 @@ export default function Login({
                             </div>
 
                             <Form
-                                {...store.form()}
+                                {...store.form(portalId ? { portal_id: portalId } as any : undefined)}
                                 resetOnSuccess={['password']}
                                 className="flex flex-col gap-6"
                             >
                                 {({ processing, errors }) => (
                                     <>
+                                        <input type="hidden" name="portal_id" value={portalId || ''} />
                                         <div className="space-y-6">
                                             {/* username Field */}
                                             <div className="space-y-2">
